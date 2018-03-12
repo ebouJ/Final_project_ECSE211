@@ -1,0 +1,61 @@
+package ca.mcgill.ecse211.tests;
+
+
+import lejos.robotics.SampleProvider;
+
+
+/**
+ * Provides filtered light data to light localizer
+ *
+ *
+ */
+public class LineDetector1 extends Thread {
+
+	private SampleProvider sample;
+	// private LightLocalizer ll;
+	private OdometryCorrection oc;
+	private float[] lightData;
+	private float lightLevel = -1f;
+	private Odometer odo;
+	// adjust for better performance 
+	private final float LIGHT_THRESHOLD = 0.3f;
+	private final double sensorCorrection = 0.3; 
+
+	/**
+	 * 
+	 * @param filteredSample
+	 * @param filteredLightData
+	 * @param ll
+	 */
+	public LineDetector1(SampleProvider filteredSample, float[] filteredLightData, OdometryCorrection oc,
+			Odometer odo) {
+		this.sample = filteredSample;
+		this.lightData = filteredLightData;
+		this.oc = oc;
+		this.odo = odo;
+		// this.ll = ll;
+	}
+
+	public void run() {
+		while (true) {
+			sample.fetchSample(lightData, 0);
+			if (lightData[0] > 0f) {
+				oc.setLightLevel1(lightData[0]);
+				lightLevel = lightData[0];
+			}
+			// detect lines and record data
+			if (lightLevel < LIGHT_THRESHOLD && Tests.correctionON) {
+				oc.x1 = odo.getXYT()[0] + sensorCorrection;
+				oc.y1 = odo.getXYT()[1] + sensorCorrection;
+			}
+			try {
+				Thread.sleep(20);
+			} catch (Exception e) {
+			} // Poor man's timed sampling
+		}
+	}
+
+	public float getLightLevel() {
+		return lightLevel;
+	}
+}
