@@ -191,7 +191,7 @@ public class Navigation {
 	}
 
 	/**
-	 * Makes the borbot spin indefintitely
+	 * Makes the robot spin indefinitely
 	 * 
 	 * @param clockwise boolean to check if spin is clockwise or COUNTER CLOCKWISE
 	 */
