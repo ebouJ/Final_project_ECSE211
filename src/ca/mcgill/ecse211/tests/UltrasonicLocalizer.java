@@ -10,7 +10,10 @@ import lejos.hardware.Sound;
  */
 public class UltrasonicLocalizer extends Thread {
 
-	// localization state
+	/**
+	 *  Enum of all localization states
+	 *
+	 */
 	public enum State {
 		FALLING_EDGE_STATE, RISING_EDGE_STATE, INIT
 	};
@@ -224,7 +227,7 @@ public class UltrasonicLocalizer extends Thread {
 	/**
 	 * For display/debugging
 	 * 
-	 * @return
+	 * @return value of theta 1
 	 */
 	public double getTheta1() {
 		return theta1;
@@ -234,7 +237,7 @@ public class UltrasonicLocalizer extends Thread {
 	/**
 	 * for display/debugging
 	 * 
-	 * @return
+	 * @return value of theta 2
 	 */
 	public double getTheta2() {
 		return theta2;
@@ -244,8 +247,7 @@ public class UltrasonicLocalizer extends Thread {
 	/**
 	 * puts thread to sleep (!!) careful, time is in seconds
 	 * 
-	 * @param time
-	 *            (seconds)
+	 * @param time in  (seconds)
 	 */
 	private void sleepThread(float time) {
 		try {

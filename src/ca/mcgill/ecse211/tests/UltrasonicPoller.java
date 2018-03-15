@@ -33,6 +33,9 @@ public class UltrasonicPoller extends Thread {
 		}
 	}
 
+	/*
+	 * returns the distance as a float.
+	 */
 	public synchronized float getDistance() {;
 		return this.distance * 100f;
 	}

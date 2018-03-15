@@ -11,7 +11,7 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
 
 /**
- * Provides filtered light data to light localizer
+ * This class is responsible for providing filtered light data to light localizer
  *
  *
  */
@@ -25,6 +25,9 @@ public class ColorIdentifier extends Thread {
 	public boolean blockDetected = false; // true if a colored block is detected
 	// possible colors of blocks
 
+	/**
+	 * Enum of all possible colours for the Block
+	 */
 	public enum BlockColor {
 		RED, BLUE, YELLOW, WHITE, NONE
 	};
@@ -35,14 +38,17 @@ public class ColorIdentifier extends Thread {
 	public BlockColor blockColor = BlockColor.NONE;
 
 	/**
-	 * 
+	 * Constructor for ColorIdentifier 
 	 * @param filteredLightData
+	 * @param tb
 	 */
 	public ColorIdentifier(float[] filteredLightData, BlockColor tb) {
 		this.lightData = filteredLightData;
 		this.tb = tb;
 	}
-
+/**
+ *Running ColorIdentifier to filter light data to the light localizer.
+ */
 	public void run() {
 		while (true) {
 			sample.fetchSample(lightData, 0);
@@ -73,15 +79,28 @@ public class ColorIdentifier extends Thread {
 		}
 	}
 
+	/**
+	 * Responsible for making a thread sleep for specific amount of time
+	 * @param seconds
+	 */
+	
 	public void sleepThread(float seconds) {
 		try {
 			Thread.sleep((long) (seconds * 1000f));
 		} catch (Exception e) {
 		}
 	}
+	/**
+	 * 
+	 * @return boolean is true if the block is detected 
+	 */
 	public synchronized boolean getBlockDetected() {
 		return this.blockDetected;
 	}
+	/**
+	 * 
+	 * @return block color
+	 */
 	public synchronized BlockColor getBlockColor() {
 		return this.blockColor;
 	}

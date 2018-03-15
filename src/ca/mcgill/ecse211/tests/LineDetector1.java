@@ -5,7 +5,7 @@ import lejos.robotics.SampleProvider;
 
 
 /**
- * Provides filtered light data to light localizer
+ * This class is responsible for provides filtered light data to light localizer
  *
  *
  */
@@ -24,8 +24,9 @@ public class LineDetector1 extends Thread {
 	/**
 	 * 
 	 * @param filteredSample
-	 * @param filteredLightData
-	 * @param ll
+	 * @param filteredLightData a float array to contain the filtered light data.
+	 * @param oc Odometry Correction
+	 * @param odo Odometer
 	 */
 	public LineDetector1(SampleProvider filteredSample, float[] filteredLightData, OdometryCorrection oc,
 			Odometer odo) {
@@ -55,6 +56,9 @@ public class LineDetector1 extends Thread {
 		}
 	}
 
+	/*
+	 * returns light level as a float.
+	 */
 	public float getLightLevel() {
 		return lightLevel;
 	}

@@ -21,6 +21,14 @@ public class Navigation {
 	Odometer odo;
 	boolean isNavigating = false;
 
+	/**
+	 * @param odo Odometer
+	 * @param leftMotor An EV3 Regulated Motor
+	 * @param rightMotor An EV3 Regulated Motor
+	 * @param leftRadius
+	 * @param rightRadius
+	 * @param width
+	 */
 	public Navigation(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
 			double leftRadius, double rightRadius, double width) {
 		this.odo = odo;
@@ -34,12 +42,11 @@ public class Navigation {
 	}
 
 	/**
-	 * navigates the robot to a point
+	 * Navigates the robot to a specific point.
 	 * 
-	 * @param x
-	 * @param y
-	 * @param tileMultiple
-	 *            multiplies x and y by tile size if true
+	 * @param x	the value of x
+	 * @param y	the value of y
+	 * @param tileMultiple multiplies x and y by tile size if true
 	 */
 
 	public void travelTo(double x, double y, boolean tileMultiple) {
@@ -66,8 +73,8 @@ public class Navigation {
 	/**
 	 * Travels to middle of specified tile, turns  on correction
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x	the value of x
+	 * @param y	the value of y
 	 */
 	public void travelToTile(double x, double y) {
 		isNavigating = true;
@@ -95,8 +102,8 @@ public class Navigation {
 	/**
 	 * Travels in steps, tile by tile, to allow correction
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x	the value of x
+	 * @param y	the value of y
 	 */
 	public void travelByTileSteps(double x, double y) {
 
@@ -126,7 +133,7 @@ public class Navigation {
 	/**
 	 * This method turns the robot angle theta (limits angle)
 	 * 
-	 * @param theta
+	 * @param theta the value of theta.
 	 */
 	public void turn(double theta) {
 		// limit to the minimum angle
@@ -146,7 +153,7 @@ public class Navigation {
 	/**
 	 * Turns the robot Towards a target angle theta
 	 * 
-	 * @param theta
+	 * @param theta the value of theta
 	 */
 	public void turnTo(double theta) {
 		theta = theta - odo.getXYT()[2];
@@ -167,9 +174,8 @@ public class Navigation {
 	/**
 	 * This method turns the robot angle theta (without limiting)
 	 * 
-	 * @param theta
-	 * @param returnEarly
-	 *            returns early if true
+	 * @param theta	the value of theta
+	 * @param returnEarly boolean that returns early if true
 	 */
 
 	public void rotate(double theta, boolean returnEarly) {
@@ -187,7 +193,7 @@ public class Navigation {
 	/**
 	 * Makes the borbot spin indefintitely
 	 * 
-	 * @param clockwise
+	 * @param clockwise boolean to check if spin is clockwise or COUNTER CLOCKWISE
 	 */
 	public void spin(boolean clockwise) {
 		leftMotor.setAcceleration(350);
@@ -207,10 +213,8 @@ public class Navigation {
 	/**
 	 * Moves the robot forward by dist
 	 * 
-	 * @param dist
-	 *            (cm)
-	 * @param returnEarly
-	 *            returns early if true
+	 * @param dist			the value of the distance in (cm)
+	 * @param returnEarly	boolean which returns early if true
 	 */
 	public void move(double dist, boolean returnEarly) {
 		// set motor speeds and acceleration
@@ -225,6 +229,7 @@ public class Navigation {
 
 	/**
 	 * moves robot forward until stop is called
+	 * @param speed		the value of speed of the robot when it moves forward.
 	 */
 	public void moveForward(int speed) {
 		leftMotor.setAcceleration(600);
@@ -247,11 +252,10 @@ public class Navigation {
 	/**
 	 * Computes distance to target
 	 * 
-	 * @param x
-	 * @param y
-	 * @param tileMultiple
-	 *            multiplies x and y by tileSize if true
-	 * @return
+	 * @param x	the value of x
+	 * @param y	the value of y
+	 * @param tileMultiple	 multiplies x and y by tileSize if true
+	 * @return value of the hypotenuse as a double
 	 */
 
 	public double computeTargetHypot(double x, double y, boolean tileMultiple) {
@@ -269,11 +273,10 @@ public class Navigation {
 	/**
 	 * Computes theta to target
 	 * 
-	 * @param x
-	 * @param y
-	 * @param tileMultiple
-	 *            multiplies x and y by tileSize if true
-	 * @return
+	 * @param 				x the value of x
+	 * @param 				y	the value of y
+	 * @param tileMultiple	multiplies x and y by tileSize if true
+	 * @return double
 	 */
 	public double computeTargetTheta(double x, double y, boolean tileMultiple) {
 		if (tileMultiple) {
@@ -288,6 +291,11 @@ public class Navigation {
 		return theta;
 	}
 
+	/*
+	 * Indicator if the robot isNavigating
+	 * 
+	 * returns true if the robot is currently navigating
+	 */
 	public boolean isNavigating() {
 		return isNavigating;
 	}
@@ -295,7 +303,7 @@ public class Navigation {
 	/**
 	 * stops the robot
 	 * 
-	 * @return returns early if true
+	 * @param returnEarly returns early if true
 	 */
 
 	public void stop(boolean returnEarly) {
@@ -304,10 +312,11 @@ public class Navigation {
 	}
 
 	/**
-	 * ...
+	 * This method allows the conversion of a distance to the total rotation of each wheel need to
+	 * cover that distance. 
 	 * 
-	 * @param radius
-	 * @param distance
+	 * @param radius		value of radius 
+	 * @param distance	value of the the distance we want to convert
 	 * @return
 	 */
 
@@ -315,10 +324,20 @@ public class Navigation {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
+	/**
+	 * @param radius 	value of radius 
+	 * @param width 		value of width 
+	 * @param angle 		value of angle
+	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
+	/**
+	 * Responsible for making a thread sleep for amount of time
+	 * 
+	 * @param seconds the value of seconds  
+	 */
 	public void sleepThread(float seconds) {
 		try {
 			Thread.sleep((long) (seconds * 1000f));

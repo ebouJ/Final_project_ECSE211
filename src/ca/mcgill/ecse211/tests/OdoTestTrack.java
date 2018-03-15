@@ -54,14 +54,21 @@ public class OdoTestTrack {
    * This method allows the conversion of a distance to the total rotation of each wheel need to
    * cover that distance.
    * 
-   * @param radius
-   * @param distance
+   * @param radius		value of the radius
+   * @param distance		value of the distance  
    * @return
    */
   private static int convertDistance(double radius, double distance) {
     return (int) ((180.0 * distance) / (Math.PI * radius));
   }
 
+  /**
+   * 
+   * @param radius
+   * @param width
+   * @param angle
+   * @return an int of the converted angle
+   */
   private static int convertAngle(double radius, double width, double angle) {
     return convertDistance(radius, Math.PI * width * angle / 360.0);
   }
