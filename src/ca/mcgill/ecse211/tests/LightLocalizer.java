@@ -18,7 +18,7 @@ public class LightLocalizer {
 		this.odo = odo;
 	}
 	/**
-	 * performs light localization 
+	 * performs light localization
 	 * @param atStartPoint (true if at start point, false otherwise)
 	 */
 	public void Localize(boolean atStartPoint) {

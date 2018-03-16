@@ -2,6 +2,12 @@ package ca.mcgill.ecse211.tests;
 
 import lejos.hardware.Sound;
 
+/**
+ * 
+ * This class is responsible for performing Odometery Correction.
+ *
+ */
+
 public class OdometryCorrection implements Runnable {
 
 	private static final long CORRECTION_PERIOD = 10;
@@ -166,7 +172,7 @@ public class OdometryCorrection implements Runnable {
 	/**
 	 * Synced with RGB Poller
 	 * 
-	 * @return
+	 * @return light level
 	 */
 
 	public synchronized float getLightLevel1() {
@@ -176,7 +182,7 @@ public class OdometryCorrection implements Runnable {
 	/**
 	 * Synced with RGB Poller
 	 * 
-	 * @param level
+	 * @param level value of the level as float
 	 */
 
 	public synchronized void setLightLevel1(float level) {

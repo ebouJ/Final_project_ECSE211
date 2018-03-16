@@ -22,8 +22,9 @@ public class LineDetector2 extends Thread {
 	/**
 	 * 
 	 * @param filteredSample
-	 * @param filteredLightData
-	 * @param ll
+	 * @param filteredLightData a float array of the filtered light data
+	 * @param oc Odometry correction
+	 * @param odo Odometer
 	 */
 	public LineDetector2(SampleProvider filteredSample, float[] filteredLightData, OdometryCorrection oc,
 			Odometer odo) {
@@ -53,6 +54,9 @@ public class LineDetector2 extends Thread {
 		}
 	}
 
+	/*
+	 * return the second light level as a float
+	 */
 	public float getLightLevel2() {
 		return lightLevel2;
 	}

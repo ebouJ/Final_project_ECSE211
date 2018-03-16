@@ -3,6 +3,12 @@ package ca.mcgill.ecse211.tests;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+/**
+ * 
+ * This class is responsible for performing Odometery.
+ *
+ */
+
 public class Odometer extends OdometerData implements Runnable {
 
   private OdometerData odoData;
@@ -30,8 +36,11 @@ public class Odometer extends OdometerData implements Runnable {
    * This is the default constructor of this class. It initiates all motors and variables once.It
    * cannot be accessed externally.
    * 
-   * @param leftMotor
-   * @param rightMotor
+   * @param leftMotor 	An EV3 Regulated Motor
+   * @param rightMotor	An EV3 Regulated Motor
+   * @param TRACK		value of TRACK
+   * @param	WHEEL_RAD	Value of the radius of the wheel
+   * 
    * @throws OdometerExceptions
    */
   private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
@@ -57,8 +66,11 @@ public class Odometer extends OdometerData implements Runnable {
   /**
    * This method is meant to ensure only one instance of the odometer is used throughout the code.
    * 
-   * @param leftMotor
-   * @param rightMotor
+   * @param leftMotor 	An EV3 regulated motor
+   * @param rightMotor	An EV3 regulated motor
+   * @param TRACK		value of TRACK
+   * @param	WHEEL_RAD	value of the radius of the wheel
+   * 
    * @return new or existing Odometer Object
    * @throws OdometerExceptions
    */

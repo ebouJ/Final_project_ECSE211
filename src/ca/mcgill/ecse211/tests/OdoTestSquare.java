@@ -22,11 +22,11 @@ public class OdoTestSquare {
 	 * to run in parallel with the odometer and Odometer correcton classes allow
 	 * testing their functionality.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
-	 * @param leftRadius
-	 * @param rightRadius
-	 * @param width
+	 * @param leftMotor		An EV3 regulated motor
+	 * @param rightMotor		An EV3 regulated motor
+	 * @param leftRadius		value of the left radius
+	 * @param rightRadius	value of the right radius
+	 * @param width			value of the width
 	 */
 	public static void drive(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, double leftRadius,
 			double rightRadius, double track) {
@@ -69,14 +69,22 @@ public class OdoTestSquare {
 	 * This method allows the conversion of a distance to the total rotation of each
 	 * wheel need to cover that distance.
 	 * 
-	 * @param radius
-	 * @param distance
+	 * @param radius		value of radius
+	 * @param distance	value of the distance
 	 * @return
 	 */
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param radius
+	 * @param width
+	 * @param angle
+	 * @return
+	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}

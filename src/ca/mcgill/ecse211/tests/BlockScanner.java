@@ -5,7 +5,7 @@ import java.util.HashMap;
 import lejos.hardware.Sound;
 
 /**
- * Scans for a block once the robot is in a search zone
+ * This class is responsible for scanning  for a block once the robot is in a search zone
  * @author remi
  *
  */

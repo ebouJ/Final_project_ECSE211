@@ -1,8 +1,12 @@
 package ca.mcgill.ecse211.tests;
 
-
 import lejos.hardware.lcd.TextLCD;
 
+/**
+ * 
+ * This class is responsible for displaying the color of block being detected.
+ *
+ */
 
 public class BlockDisplay implements Runnable {
 
@@ -11,23 +15,28 @@ public class BlockDisplay implements Runnable {
 	private final long DISPLAY_PERIOD = 25;
 	private long timeout = Long.MAX_VALUE;
 
-	
-	public BlockDisplay(TextLCD lcd, ColorIdentifier rgb )  {
+	/**
+	 * Constructor for BlockDisplay.
+	 * 
+	 * @param lcd
+	 * @param rgb
+	 */
+	public BlockDisplay(TextLCD lcd, ColorIdentifier rgb) {
 		this.rgb = rgb;
 		this.lcd = lcd;
 	}
 
 	/**
-	 * 
 	 * @param lcd
 	 * @param timeout
-	 * @throws OdometerExceptions
 	 */
 	public BlockDisplay(TextLCD lcd, long timeout) {
 		this.timeout = timeout;
 		this.lcd = lcd;
 	}
-
+	/**
+	 *Running Block Display.
+	 */
 	public void run() {
 
 		lcd.clear();
@@ -56,4 +65,3 @@ public class BlockDisplay implements Runnable {
 	}
 
 }
-

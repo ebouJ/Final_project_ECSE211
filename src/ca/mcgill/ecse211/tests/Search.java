@@ -7,6 +7,12 @@ import java.util.Map;
 import ca.mcgill.ecse211.tests.ColorIdentifier.BlockColor;
 import lejos.hardware.Sound;
 
+/**
+ * 
+ * This class is responsible for searching.
+ *
+ */
+
 public class Search extends Thread {
 
 	private final double TILE_SIZE = 30.48;
@@ -19,6 +25,10 @@ public class Search extends Thread {
 	Map map = new HashMap<Double,Double>();
 	
 
+	/**
+	 * Enum of all the states of the robot functionalities.
+	 *
+	 */
 	public enum State {
 		INIT, SEARCHING, FOUNDBLOCK, FOUNDTARGET, FINISHED
 	}
@@ -91,7 +101,7 @@ public class Search extends Thread {
 	}
 	/**
 	 * returns 1 if target block, 2 if non-target, 3 otherwise
-	 * @return
+	 * @return int that indicates if block is found or not
 	 */
 	public int checkForBlocksColor() {
 		if (rgb.getBlockDetected()) {
