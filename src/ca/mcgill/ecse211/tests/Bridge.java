@@ -19,7 +19,6 @@ public class Bridge {
 	 */
 
 	public void travelToBridge(double x, double y) {
-		
 		nav.travelByTileSteps(x - 2, y);
 		nav.turnTo(0);
 		ll.Localize(false);

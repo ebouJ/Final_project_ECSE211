@@ -143,7 +143,7 @@ public class Tests {
 		// Bridge crosser
 		Bridge bridge = new Bridge(navigation, odometer, lightLocalizer);
 		// Scanner
-		BlockScanner scan = new BlockScanner(navigation, usPoller);
+		BlockScanner scan = new BlockScanner(navigation, usPoller,odometer);
 
 		// chose odo & Nav
 		if (buttonChoice == Button.ID_LEFT) {
@@ -229,12 +229,10 @@ public class Tests {
 			
 			// chose Navigation
 			else if (buttonChoice == Button.ID_RIGHT) {
-
 				Thread odoThread = new Thread(odometer);
 				odoThread.start();
 				Thread odoDisplayThread = new Thread(odometryDisplay);
 				odoDisplayThread.start();
-
 				// start us localization
 				usPoller.start();
 				usLocalizer.start();
@@ -333,7 +331,13 @@ public class Tests {
 				else if (buttonChoice == Button.ID_RIGHT) {
 					lcd.clear();
 					usPoller.start();
+					Thread odoThread = new Thread(odometer);
+					odoThread.start();
 					scan.Scan();
+//					ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
+//					blockColorSensor.start();
+//					Search search = new Search(odometer,navigation,blockColorSensor,scan);
+//					search.start();
 					// TO DO: rest of search
 				}
 				else if (buttonChoice == Button.ID_UP) {

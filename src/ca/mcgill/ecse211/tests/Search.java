@@ -1,5 +1,9 @@
 package ca.mcgill.ecse211.tests;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import ca.mcgill.ecse211.tests.ColorIdentifier.BlockColor;
 import lejos.hardware.Sound;
 
@@ -9,8 +13,11 @@ public class Search extends Thread {
 	private Navigation nav;
 	private Odometer odometer;
 	private ColorIdentifier rgb;
+	private BlockScanner bs;
 	int counter = 0;
 	boolean detect = false;
+	Map map = new HashMap<Double,Double>();
+	
 
 	public enum State {
 		INIT, SEARCHING, FOUNDBLOCK, FOUNDTARGET, FINISHED
@@ -18,10 +25,11 @@ public class Search extends Thread {
 
 	private State state = State.INIT;
 
-	public Search(Odometer odo, Navigation nav, ColorIdentifier rgb) {
+	public Search(Odometer odo, Navigation nav, ColorIdentifier rgb, BlockScanner bs) {
 		this.nav = nav;
 		this.odometer = odo;
 		this.rgb = rgb;
+		this.bs = bs;
 	}
 
 	public void run() {
@@ -53,6 +61,7 @@ public class Search extends Thread {
 	}
 
 	private State state_searching() {
+		// rotating a robot
 		return State.SEARCHING;
 	}
 
@@ -70,12 +79,14 @@ public class Search extends Thread {
 			return State.SEARCHING;
 		}
 	}
+	
 
 	private State state_foundTarget() {
 		return State.FINISHED;
 	}
 
 	private State state_finished() {
+		// after finished then navigate to the last 
 		return null;
 	}
 	/**
