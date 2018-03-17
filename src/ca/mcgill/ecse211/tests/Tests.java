@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.tests;
 
 import ca.mcgill.ecse211.tests.Navigation;
 
+import java.util.Map;
+
+import ca.mcgill.ecse211.WiFiClient.WifiConnection;
+
 import ca.mcgill.ecse211.tests.Odometer;
 import ca.mcgill.ecse211.tests.ColorIdentifier.BlockColor;
 import ca.mcgill.ecse211.tests.OdoTestTrack;
@@ -26,6 +30,15 @@ import lejos.robotics.filter.MedianFilter;
  *
  */
 public class Tests {
+	  // ** Set these as appropriate for your team and current situation **
+	//wifi code already implemented!
+	/*
+	  private static final String SERVER_IP = "192.168.2.16";
+	  private static final int TEAM_NUMBER = 2;
+	  private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
+	*/  
+	
+	
 	// Motors
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
@@ -74,6 +87,36 @@ public class Tests {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
+		
+		/*
+	    WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+	    try {
+	         
+	        Map data = conn.getData();
+
+	        // Example 1: Print out all received data
+	        System.out.println("Map:\n" + data);
+
+	        // Example 2 : Print out specific values
+	        int redTeam = ((Long) data.get("RedTeam")).intValue();
+	        System.out.println("Red Team: " + redTeam);
+
+	        int og = ((Long) data.get("OG")).intValue();
+	        System.out.println("Green opponent flag: " + og);
+
+	        // Example 3: Compare value
+	        int tn_ll_x =  ((Long) data.get("TN_LL_x")).intValue();
+	        if (tn_ll_x < 5) {
+	          System.out.println("Tunnel LL corner X < 5");
+	        }
+	        else {
+	          System.out.println("Tunnel LL corner X >= 5");
+	        }
+
+	      } catch (Exception e) {
+	        System.err.println("Error: " + e.getMessage());
+	      }
+	      */
 		int buttonChoice = -1;
 		final TextLCD lcd = LocalEV3.get().getTextLCD();
 
