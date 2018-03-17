@@ -1,6 +1,7 @@
 
 package ca.mcgill.ecse211.tests;
 
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
@@ -22,9 +23,12 @@ public class Navigation {
 	boolean isNavigating = false;
 
 	/**
-	 * @param odo Odometer
-	 * @param leftMotor An EV3 Regulated Motor
-	 * @param rightMotor An EV3 Regulated Motor
+	 * @param odo
+	 *            Odometer
+	 * @param leftMotor
+	 *            An EV3 Regulated Motor
+	 * @param rightMotor
+	 *            An EV3 Regulated Motor
 	 * @param leftRadius
 	 * @param rightRadius
 	 * @param width
@@ -44,9 +48,12 @@ public class Navigation {
 	/**
 	 * Navigates the robot to a specific point.
 	 * 
-	 * @param x	the value of x
-	 * @param y	the value of y
-	 * @param tileMultiple multiplies x and y by tile size if true
+	 * @param x
+	 *            the value of x
+	 * @param y
+	 *            the value of y
+	 * @param tileMultiple
+	 *            multiplies x and y by tile size if true
 	 */
 
 	public void travelTo(double x, double y, boolean tileMultiple) {
@@ -71,10 +78,12 @@ public class Navigation {
 	}
 
 	/**
-	 * Travels to middle of specified tile, turns  on correction
+	 * Travels to middle of specified tile, turns on correction
 	 * 
-	 * @param x	the value of x
-	 * @param y	the value of y
+	 * @param x
+	 *            the value of x
+	 * @param y
+	 *            the value of y
 	 */
 	public void travelToTile(double x, double y) {
 		isNavigating = true;
@@ -102,26 +111,29 @@ public class Navigation {
 	/**
 	 * Travels in steps, tile by tile, to allow correction
 	 * 
-	 * @param x	the value of x
-	 * @param y	the value of y
+	 * @param x
+	 *            the value of x
+	 * @param y
+	 *            the value of y
 	 */
 	public void travelByTileSteps(double x, double y) {
 
-		if ((odo.getXYT()[1] / TILE_SIZE) <= y + 1 && (odo.getXYT()[0] / TILE_SIZE) <= x + 1) {
+		if ((odo.getXYT()[1] / TILE_SIZE) <= y + 1) {
+			Sound.beep();
 			for (int i = (int) (odo.getXYT()[1] / TILE_SIZE) + 1; i <= y; i++) {
 				travelToTile(Math.floor(odo.getXYT()[0] / TILE_SIZE), i);
 			}
-
-			for (int i = (int) (odo.getXYT()[0] / TILE_SIZE) + 1; i <= x; i++) {
-				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
-			}
-		}
-
-		else if ((odo.getXYT()[1] / TILE_SIZE + 1) >= y && (odo.getXYT()[0] / TILE_SIZE + 1) >= x) {
-
+		} else if ((odo.getXYT()[1] / TILE_SIZE + 1) >= y) {
+			Sound.beep();
 			for (int i = (int) (odo.getXYT()[1] / TILE_SIZE) - 1; i >= y; i--) {
 				travelToTile(Math.floor(odo.getXYT()[0] / TILE_SIZE), i);
 			}
+		}
+		if ((odo.getXYT()[0] / TILE_SIZE) <= x + 1) {
+			for (int i = (int) (odo.getXYT()[0] / TILE_SIZE) + 1; i <= x; i++) {
+				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
+			}
+		} else if ((odo.getXYT()[0] / TILE_SIZE + 1) >= x) {
 
 			for (int i = (int) (odo.getXYT()[0] / TILE_SIZE) - 1; i >= x; i--) {
 				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
@@ -133,7 +145,8 @@ public class Navigation {
 	/**
 	 * This method turns the robot angle theta (limits angle)
 	 * 
-	 * @param theta the value of theta.
+	 * @param theta
+	 *            the value of theta.
 	 */
 	public void turn(double theta) {
 		// limit to the minimum angle
@@ -153,7 +166,8 @@ public class Navigation {
 	/**
 	 * Turns the robot Towards a target angle theta
 	 * 
-	 * @param theta the value of theta
+	 * @param theta
+	 *            the value of theta
 	 */
 	public void turnTo(double theta) {
 		theta = theta - odo.getXYT()[2];
@@ -174,8 +188,10 @@ public class Navigation {
 	/**
 	 * This method turns the robot angle theta (without limiting)
 	 * 
-	 * @param theta	the value of theta
-	 * @param returnEarly boolean that returns early if true
+	 * @param theta
+	 *            the value of theta
+	 * @param returnEarly
+	 *            boolean that returns early if true
 	 */
 
 	public void rotate(double theta, boolean returnEarly) {
@@ -193,7 +209,8 @@ public class Navigation {
 	/**
 	 * Makes the robot spin indefinitely
 	 * 
-	 * @param clockwise boolean to check if spin is clockwise or COUNTER CLOCKWISE
+	 * @param clockwise
+	 *            boolean to check if spin is clockwise or COUNTER CLOCKWISE
 	 */
 	public void spin(boolean clockwise) {
 		leftMotor.setAcceleration(350);
@@ -213,8 +230,10 @@ public class Navigation {
 	/**
 	 * Moves the robot forward by dist
 	 * 
-	 * @param dist			the value of the distance in (cm)
-	 * @param returnEarly	boolean which returns early if true
+	 * @param dist
+	 *            the value of the distance in (cm)
+	 * @param returnEarly
+	 *            boolean which returns early if true
 	 */
 	public void move(double dist, boolean returnEarly) {
 		// set motor speeds and acceleration
@@ -229,7 +248,9 @@ public class Navigation {
 
 	/**
 	 * moves robot forward until stop is called
-	 * @param speed		the value of speed of the robot when it moves forward.
+	 * 
+	 * @param speed
+	 *            the value of speed of the robot when it moves forward.
 	 */
 	public void moveForward(int speed) {
 		leftMotor.setAcceleration(600);
@@ -252,9 +273,12 @@ public class Navigation {
 	/**
 	 * Computes distance to target
 	 * 
-	 * @param x	the value of x
-	 * @param y	the value of y
-	 * @param tileMultiple	 multiplies x and y by tileSize if true
+	 * @param x
+	 *            the value of x
+	 * @param y
+	 *            the value of y
+	 * @param tileMultiple
+	 *            multiplies x and y by tileSize if true
 	 * @return value of the hypotenuse as a double
 	 */
 
@@ -273,9 +297,12 @@ public class Navigation {
 	/**
 	 * Computes theta to target
 	 * 
-	 * @param 				x the value of x
-	 * @param 				y	the value of y
-	 * @param tileMultiple	multiplies x and y by tileSize if true
+	 * @param x
+	 *            the value of x
+	 * @param y
+	 *            the value of y
+	 * @param tileMultiple
+	 *            multiplies x and y by tileSize if true
 	 * @return double
 	 */
 	public double computeTargetTheta(double x, double y, boolean tileMultiple) {
@@ -303,7 +330,8 @@ public class Navigation {
 	/**
 	 * stops the robot
 	 * 
-	 * @param returnEarly returns early if true
+	 * @param returnEarly
+	 *            returns early if true
 	 */
 
 	public void stop(boolean returnEarly) {
@@ -312,11 +340,13 @@ public class Navigation {
 	}
 
 	/**
-	 * This method allows the conversion of a distance to the total rotation of each wheel need to
-	 * cover that distance. 
+	 * This method allows the conversion of a distance to the total rotation of each
+	 * wheel need to cover that distance.
 	 * 
-	 * @param radius		value of radius 
-	 * @param distance	value of the the distance we want to convert
+	 * @param radius
+	 *            value of radius
+	 * @param distance
+	 *            value of the the distance we want to convert
 	 * @return
 	 */
 
@@ -325,9 +355,12 @@ public class Navigation {
 	}
 
 	/**
-	 * @param radius 	value of radius 
-	 * @param width 		value of width 
-	 * @param angle 		value of angle
+	 * @param radius
+	 *            value of radius
+	 * @param width
+	 *            value of width
+	 * @param angle
+	 *            value of angle
 	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
@@ -336,7 +369,8 @@ public class Navigation {
 	/**
 	 * Responsible for making a thread sleep for amount of time
 	 * 
-	 * @param seconds the value of seconds  
+	 * @param seconds
+	 *            the value of seconds
 	 */
 	public void sleepThread(float seconds) {
 		try {

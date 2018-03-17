@@ -44,8 +44,8 @@ public class OdoTestTrack {
       leftMotor.setSpeed(ROTATE_SPEED);
       rightMotor.setSpeed(ROTATE_SPEED);
 
-      leftMotor.rotate(convertAngle(leftRadius, track, 360), true);
-      rightMotor.rotate(-convertAngle(rightRadius, track, 360), false);
+      leftMotor.rotate(convertAngle(leftRadius, track, 1080), true);
+      rightMotor.rotate(-convertAngle(rightRadius, track, 1080), false);
       
     }
   }

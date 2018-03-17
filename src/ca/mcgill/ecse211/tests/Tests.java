@@ -54,16 +54,16 @@ public class Tests {
 	private static float[] RGBData2;
 
 	// Constants (Adjust these for better performance)
-	public static final double WHEEL_RAD = 1.63;
-	public static final double TRACK = 18.7;
+	public static final double WHEEL_RAD = 1.70;
+	public static final double TRACK = 16.0; //15.7
 
 	// Positions
 	public static final double[] lowerCorner = { 3, 3 };
 	public static final double[] upperCorner = { 7, 7 };
-	public static final double[] startingCorner = { 0, 0 };
+	//public static final double[] startingCorner = { 0, 0 };
 	// public static final double[] startingCorner = { 8, 0 };
 	// public static final double[] startingCorner = { 0, 8 };
-	// public static final double[] startingCorner = { 8, 8 };
+	 public static final double[] startingCorner = { 8, 8 };
 	public static final double[] bridgeLocation = {3,2};
 
 	// Target Block
@@ -254,8 +254,8 @@ public class Tests {
 				
 				//now we can navigate
 				//bridge.travelToBridge(bridgeLocation [0], bridgeLocation [1]);
-				navigation.travelByTileSteps(0, 3);
-				navigation.travelByTileSteps(0, 0);
+				navigation.travelByTileSteps(3, 3);
+//				navigation.travelByTileSteps(0, 0);
 //				lightLocalizer.Localize(false);
 //				// wait for light localizer to finish
 //				while (!lightLocalizer.finished) {
