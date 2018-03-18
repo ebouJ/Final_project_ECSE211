@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.tests;
 
 import ca.mcgill.ecse211.tests.Navigation;
 
+import java.util.Map;
+
+import ca.mcgill.ecse211.WiFiClient.WifiConnection;
+
 import ca.mcgill.ecse211.tests.Odometer;
 import ca.mcgill.ecse211.tests.ColorIdentifier.BlockColor;
 import ca.mcgill.ecse211.tests.OdoTestTrack;
@@ -26,6 +30,14 @@ import lejos.robotics.filter.MedianFilter;
  *
  */
 public class Tests {
+	// ** Set these as appropriate for your team and current situation **
+	// wifi code already implemented!
+	/*
+	 * private static final String SERVER_IP = "192.168.2.16"; private static final
+	 * int TEAM_NUMBER = 2; private static final boolean ENABLE_DEBUG_WIFI_PRINT =
+	 * true;
+	 */
+
 	// Motors
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
@@ -55,16 +67,30 @@ public class Tests {
 
 	// Constants (Adjust these for better performance)
 	public static final double WHEEL_RAD = 1.70;
-	public static final double TRACK = 16.0; //15.7
+	public static final double TRACK = 16.0; // 15.7
 
 	// Positions
 	public static final double[] lowerCorner = { 3, 3 };
 	public static final double[] upperCorner = { 7, 7 };
-	//public static final double[] startingCorner = { 0, 0 };
-	// public static final double[] startingCorner = { 8, 0 };
-	// public static final double[] startingCorner = { 0, 8 };
-	 public static final double[] startingCorner = { 8, 8 };
-	public static final double[] bridgeLocation = {3,2};
+	// Starting corner for demo
+	public static double[] startingCorner = new double[2];
+	// Starting Corners for testing
+	// public static double[] startingCorner = { 0, 0 };
+	// public static double[] startingCorner = { 8, 0 };
+	// public static double[] startingCorner = { 0, 8 };
+	// public static double[] startingCorner = { 8, 8 };
+	public static final double[] bridgeLocation_UR = { 6, 5 };
+	public static final double[] bridgeLocation_LL = { 5, 3 };
+	public static final double[] tunnelLocation_LL = { 2, 3 };
+	public static final double[] tunnelLocation_UR = { 3, 5 };
+
+	public static enum Start_Zone {
+		Green_Zone, Red_zone
+	};
+
+	// Set starting zone (for testing)
+	// public static Start_Zone startZone = Start_Zone.Green_Zone;
+	public static Start_Zone startZone = Start_Zone.Red_zone;
 
 	// Target Block
 	public static BlockColor tb = BlockColor.BLUE;
@@ -74,6 +100,40 @@ public class Tests {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
+		/*
+		 * set starting corner by search zone
+		 */
+		if (startZone == Start_Zone.Green_Zone) {
+			startingCorner[0] = 8;
+			startingCorner[1] = 0;
+		}
+		if (startZone == Start_Zone.Red_zone) {
+			startingCorner[0] = 0;
+			startingCorner[1] = 8;
+		}
+
+		/*
+		 * WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER,
+		 * ENABLE_DEBUG_WIFI_PRINT); try {
+		 * 
+		 * Map data = conn.getData();
+		 * 
+		 * // Example 1: Print out all received data System.out.println("Map:\n" +
+		 * data);
+		 * 
+		 * // Example 2 : Print out specific values int redTeam = ((Long)
+		 * data.get("RedTeam")).intValue(); System.out.println("Red Team: " + redTeam);
+		 * 
+		 * int og = ((Long) data.get("OG")).intValue();
+		 * System.out.println("Green opponent flag: " + og);
+		 * 
+		 * // Example 3: Compare value int tn_ll_x = ((Long)
+		 * data.get("TN_LL_x")).intValue(); if (tn_ll_x < 5) {
+		 * System.out.println("Tunnel LL corner X < 5"); } else {
+		 * System.out.println("Tunnel LL corner X >= 5"); }
+		 * 
+		 * } catch (Exception e) { System.err.println("Error: " + e.getMessage()); }
+		 */
 		int buttonChoice = -1;
 		final TextLCD lcd = LocalEV3.get().getTextLCD();
 
@@ -124,8 +184,7 @@ public class Tests {
 				System.exit(0);
 			}
 		}).start();
-		
-		
+
 		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
 		// // Navigation
 		Navigation navigation = new Navigation(odometer, leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
@@ -143,7 +202,7 @@ public class Tests {
 		// Bridge crosser
 		Bridge bridge = new Bridge(navigation, odometer, lightLocalizer);
 		// Scanner
-		BlockScanner scan = new BlockScanner(navigation, usPoller,odometer);
+		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
 
 		// chose odo & Nav
 		if (buttonChoice == Button.ID_LEFT) {
@@ -204,7 +263,7 @@ public class Tests {
 						}).start();
 
 					}
-					
+
 					// Odometry correction test
 				} else if (buttonChoice == Button.ID_RIGHT) {
 					correctionON = true;
@@ -226,7 +285,7 @@ public class Tests {
 					}).start();
 				}
 			}
-			
+
 			// chose Navigation
 			else if (buttonChoice == Button.ID_RIGHT) {
 				Thread odoThread = new Thread(odometer);
@@ -251,23 +310,9 @@ public class Tests {
 				// wait for light localizer to finish
 				while (!lightLocalizer.finished) {
 				}
-				
-				//now we can navigate
-				//bridge.travelToBridge(bridgeLocation [0], bridgeLocation [1]);
+				// Now we can Navigate...
 				navigation.travelByTileSteps(3, 3);
-//				navigation.travelByTileSteps(0, 0);
-//				lightLocalizer.Localize(false);
-//				// wait for light localizer to finish
-//				while (!lightLocalizer.finished) {
-//				}
-//				navigation.travelToTile(3, 3);
-//				navigation.turnTo(90);
-//				
-//				navigation.move(90, false);
-//				navigation.travelByTileSteps(0, 0);
-//				navigation.travelByTileSteps(0, 0);
-//				navigation.travelByTileSteps(3, 3);
-//				navigation.travelByTileSteps(0, 0);
+				navigation.travelByTileSteps(0, 0);
 
 			}
 
@@ -280,7 +325,7 @@ public class Tests {
 			lcd.drawString("  local-| search  ", 0, 2);
 			lcd.drawString("ization |   Color ", 0, 3);
 			buttonChoice = Button.waitForAnyPress();
-			
+
 			// chose localisation
 			if (buttonChoice == Button.ID_LEFT) {
 				lcd.clear();
@@ -310,14 +355,15 @@ public class Tests {
 			// chose search and color
 			else if (buttonChoice == Button.ID_RIGHT) {
 				lcd.clear();
-				lcd.drawString("< Left  | Right > ", 0, 0);
-				lcd.drawString("        |         ", 0, 1);
+				lcd.drawString("^Up^: Green Team  ", 0, 0);
+				lcd.drawString("< Left  | Right > ", 0, 1);
 				lcd.drawString(" color  | search  ", 0, 2);
 				lcd.drawString(" detect |         ", 0, 3);
+				lcd.drawString(" Down: red team   ", 0, 4);
 				buttonChoice = Button.waitForAnyPress();
-				
+
 				// color test
-				if(buttonChoice == Button.ID_LEFT) {
+				if (buttonChoice == Button.ID_LEFT) {
 					// still needs to be changed
 					// // Start rgb block poller
 					ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
@@ -334,22 +380,90 @@ public class Tests {
 					Thread odoThread = new Thread(odometer);
 					odoThread.start();
 					scan.Scan();
-//					ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
-//					blockColorSensor.start();
-//					Search search = new Search(odometer,navigation,blockColorSensor,scan);
-//					search.start();
+					// ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
+					// blockColorSensor.start();
+					// Search search = new Search(odometer,navigation,blockColorSensor,scan);
+					// search.start();
 					// TO DO: rest of search
+
+					// chose green team
+				} else if (buttonChoice == Button.ID_UP) {
+					Thread odoThread = new Thread(odometer);
+					odoThread.start();
+					Thread odoDisplayThread = new Thread(odometryDisplay);
+					odoDisplayThread.start();
+					// start us localization
+					usPoller.start();
+					usLocalizer.start();
+					// wait for us localizer to finish
+					while (!usLocalizer.finished) {
+					}
+					// use odo corretction as light localization
+					Thread lineDeterctor1Thread = new Thread(lineDetector1);
+					lineDeterctor1Thread.start();
+					Thread lineDeterctor2Thread = new Thread(lineDetector2);
+					lineDeterctor2Thread.start();
+					Thread odoCorrectionThread = new Thread(odometryCorrection);
+					odoCorrectionThread.start();
+					// start light localization
+					lightLocalizer.Localize(true);
+					// wait for light localizer to finish
+					while (!lightLocalizer.finished) {
+					}
+
+					// Go to tunnel
+					bridge.travelToTunnel();
+					navigation.turnTo(0);
+					navigation.move(98, false);
+					lightLocalizer.Localize(false);
+					// Go to bridge
+					bridge.travelToBridge();
+					navigation.turnTo(180);
+					navigation.move(98, false);
+					lightLocalizer.Localize(false);
+					navigation.travelByTileSteps(7, 0);
+
+					// chose red team
+				} else if (buttonChoice == Button.ID_DOWN) {
+					Thread odoThread = new Thread(odometer);
+					odoThread.start();
+					Thread odoDisplayThread = new Thread(odometryDisplay);
+					odoDisplayThread.start();
+					// start us localization
+					usPoller.start();
+					usLocalizer.start();
+					// wait for us localizer to finish
+					while (!usLocalizer.finished) {
+					}
+					// use odo corretction as light localization
+					Thread lineDeterctor1Thread = new Thread(lineDetector1);
+					lineDeterctor1Thread.start();
+					Thread lineDeterctor2Thread = new Thread(lineDetector2);
+					lineDeterctor2Thread.start();
+					Thread odoCorrectionThread = new Thread(odometryCorrection);
+					odoCorrectionThread.start();
+					// start light localization
+					lightLocalizer.Localize(true);
+					// wait for light localizer to finish
+					while (!lightLocalizer.finished) {
+					}
+					
+					// Go to bridge
+					bridge.travelToBridge();
+					navigation.turnTo(180);
+					navigation.move(98, false);
+					lightLocalizer.Localize(false);
+					
+					// Go to tunnel
+					bridge.travelToTunnel();
+					navigation.turnTo(0);
+					navigation.move(98, false);
+					lightLocalizer.Localize(false);
+					
 				}
-				else if (buttonChoice == Button.ID_UP) {
-					//place holder 
-				}
-				else if (buttonChoice == Button.ID_DOWN) {
-					//place holder 
-				}
-				
+
 			}
 		}
-
 
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
 		}
