@@ -45,7 +45,7 @@ public class BridgeTunnel {
 			nav.travelByTileSteps(x, y);
 
 			nav.turnTo(180);
-			nav.travelToTile(Tests.bridgeLocation_LL[0], Tests.bridgeLocation_LL[1] - 1.2);
+			nav.travelToTile(Tests.bridgeLocation_LL[0], Tests.bridgeLocation_LL[1] -1);
 			ll.Localize(false);
 		} else {
 
@@ -70,7 +70,6 @@ public class BridgeTunnel {
 			//nav.travelByTileSteps(x, y - 1);
 			//nav.turnTo(0);
 			nav.travelToTile(Tests.tunnelLocation_UR[0] - 1, Tests.tunnelLocation_UR[1]);
-
 		}
 
 		finished = true;

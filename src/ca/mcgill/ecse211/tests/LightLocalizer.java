@@ -33,7 +33,7 @@ public class LightLocalizer {
 		// correct y or x and theta
 		Tests.correctionON = true;
 		try {
-			Thread.sleep(300);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -44,28 +44,27 @@ public class LightLocalizer {
 
 		Tests.correctionON = false;
 		nav.move(-passLine, false);
-		// turn towards y or x line
-		if (Tests.startingCorner[1] < 1 && atStartPoint) {
-			nav.turnTo(0);
-		} else if (Tests.startingCorner[1] > 1 && atStartPoint) {
-			nav.turnTo(180);
-		}
+
 		// turn 90 deg towards x or y line
-		if (Tests.startingCorner[0] == Tests.startingCorner[1] && atStartPoint) {
-			nav.turn(90);
-		} else if (Tests.startingCorner[0] != Tests.startingCorner[1] && atStartPoint) {
-			nav.turn(-90);
+		if ((Tests.startCorner == 0 || Tests.startCorner == 3) && atStartPoint) {
+			// if (Tests.startingCorner[0] == Tests.startingCorner[1] && atStartPoint) {
+			// nav.turn(90);
+			nav.turnTo(90);
+			// } else if (Tests.startingCorner[0] != Tests.startingCorner[1] &&
+			// atStartPoint) {
+		} else if ((Tests.startCorner == 1 || Tests.startCorner == 2) && atStartPoint) {
+			// nav.turn(-90);
+			nav.turnTo(270);
 		} else if (odo.getXYT()[0] < TILE_SIZE) {
 			nav.turn(90);
 		} else {
 			nav.turn(90);
-			//nav.turn(-90);
-
+			// nav.turn(-90);
 		}
 		// correct x and theta
 		Tests.correctionON = true;
 		try {
-			Thread.sleep(300);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
