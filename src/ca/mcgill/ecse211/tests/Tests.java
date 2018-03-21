@@ -66,8 +66,8 @@ public class Tests {
 	private static float[] RGBData2;
 
 	// Constants (Adjust these for better performance)
-	public static final double WHEEL_RAD = 1.70;
-	public static final double TRACK = 16.0; // 15.7
+	public static final double WHEEL_RAD = 2.1; //1.7
+	public static final double TRACK = 14.8; // 16.0
 
 	// Positions
 	// public static final double[] lowerCorner = { 3, 3 };
