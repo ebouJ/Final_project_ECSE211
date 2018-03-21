@@ -13,7 +13,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Navigation {
 	private static final int FORWARD_SPEED = 300;
-	private static final int ROTATE_SPEED = 150;
+	private static final int ROTATE_SPEED = 200;
 	private static final double TILE_SIZE = 30.48;
 	EV3LargeRegulatedMotor leftMotor;
 	EV3LargeRegulatedMotor rightMotor;
@@ -87,7 +87,6 @@ public class Navigation {
 	 */
 	public void travelToTile(double x, double y) {
 		isNavigating = true;
-		Tests.correctionON = true;
 
 		// Calculate distance from current position
 		double hypotenuse = computeTargetHypot(x + 0.5, y + 0.5, true);
@@ -105,7 +104,6 @@ public class Navigation {
 		rightMotor.rotate(convertDistance(rightRadius, hypotenuse), false);
 
 		isNavigating = false;
-		Tests.correctionON = false;
 	}
 
 	/**
@@ -117,14 +115,12 @@ public class Navigation {
 	 *            the value of y
 	 */
 	public void travelByTileSteps(double x, double y) {
-
+		Tests.correctionON = true;
 		if ((odo.getXYT()[1] / TILE_SIZE) <= y + 1) {
-			Sound.beep();
 			for (int i = (int) (odo.getXYT()[1] / TILE_SIZE) + 1; i <= y; i++) {
 				travelToTile(Math.floor(odo.getXYT()[0] / TILE_SIZE), i);
 			}
 		} else if ((odo.getXYT()[1] / TILE_SIZE + 1) >= y) {
-			Sound.beep();
 			for (int i = (int) (odo.getXYT()[1] / TILE_SIZE) - 1; i >= y; i--) {
 				travelToTile(Math.floor(odo.getXYT()[0] / TILE_SIZE), i);
 			}
@@ -139,7 +135,7 @@ public class Navigation {
 				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
 			}
 		}
-
+		Tests.correctionON = false;
 	}
 
 	/**
@@ -263,7 +259,7 @@ public class Navigation {
 			// rightMotor.stop();
 			leftMotor.setSpeed(speed);
 			rightMotor.setSpeed(speed);
-			return;
+			//return;
 		}
 
 		leftMotor.forward();

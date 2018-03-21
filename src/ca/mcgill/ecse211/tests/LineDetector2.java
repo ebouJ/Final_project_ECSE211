@@ -16,7 +16,7 @@ public class LineDetector2 extends Thread {
 	private float[] lightData2;
 	private float lightLevel2 = -1f;
 	private Odometer odo;
-	private final float LIGHT_THRESHOLD = 0.3f;
+	private final float LIGHT_THRESHOLD = 0.35f;
 	private final double sensorCorrection = 0.0;
 
 	/**

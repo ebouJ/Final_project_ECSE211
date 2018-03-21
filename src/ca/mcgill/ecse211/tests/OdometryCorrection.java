@@ -18,6 +18,7 @@ public class OdometryCorrection implements Runnable {
 	private double tileSize = 30.48;
 	private final int maxTiles = 14;
 	private final double tolerance = 5; 
+	public boolean needsCorrection = false;
 	// position of detected lines
 	public double x1 = -1; // sensor 1 (right)
 	public double y1 = -1;
@@ -119,6 +120,7 @@ public class OdometryCorrection implements Runnable {
 				y1 = -1;
 				x2 = -1;
 				y2 = -1;
+				needsCorrection = false;
 			}
 
 			// this ensure the odometry correction occurs only once every period
@@ -133,10 +135,10 @@ public class OdometryCorrection implements Runnable {
 		}
 	}
 
-	private boolean needsCorrection() {
+	public boolean needsCorrection() {
 		// A correction is needed if a line is crossed
-		boolean needsCorrection = false;
-		if (x1 != -1 && x2 != -1 && x1 != -1 && x2 != -1) {
+		//boolean needsCorrection = false;
+		if (x1 != -1 && x2 != -1 && y1 != -1 && y2 != -1) {
 			needsCorrection = true;
 		}
 		return needsCorrection;

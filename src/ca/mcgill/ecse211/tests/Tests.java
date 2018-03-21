@@ -70,20 +70,29 @@ public class Tests {
 	public static final double TRACK = 16.0; // 15.7
 
 	// Positions
-	public static final double[] lowerCorner = { 3, 3 };
-	public static final double[] upperCorner = { 7, 7 };
-	// Starting corner for demo
+	// public static final double[] lowerCorner = { 3, 3 };
+	// public static final double[] upperCorner = { 7, 7 };
+
+	// Possible Starting Corners
+	// public static double startCorner = 0; // (0,0)
+	// public static double startCorner = 1; //(8,0)
+	// public static double startCorner = 2; //(8,8)
+	public static double startCorner = 3; //(0,8)
+
+	// Starting corner for DEMO
 	public static double[] startingCorner = new double[2];
-	// Starting Corners for testing
-	// public static double[] startingCorner = { 0, 0 };
-	// public static double[] startingCorner = { 8, 0 };
-	// public static double[] startingCorner = { 0, 8 };
-	// public static double[] startingCorner = { 8, 8 };
+	// Bridge and tunnel coodrdinates
 	public static final double[] bridgeLocation_UR = { 6, 5 };
 	public static final double[] bridgeLocation_LL = { 5, 3 };
 	public static final double[] tunnelLocation_LL = { 2, 3 };
 	public static final double[] tunnelLocation_UR = { 3, 5 };
+	// Zone coordinates
+	public static final double[] red_UR = new double[2];
+	public static final double[] red_LL = new double[2];
+	public static final double[] green_UR = new double[2];
+	public static final double[] green_LL = new double[2];
 
+	// Starting zone (Team)
 	public static enum Start_Zone {
 		Green_Zone, Red_zone
 	};
@@ -100,14 +109,18 @@ public class Tests {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
-		/*
-		 * set starting corner by search zone
-		 */
-		if (startZone == Start_Zone.Green_Zone) {
+
+		// Set starting corner
+		if (startCorner == 0) {
+			startingCorner[0] = 0;
+			startingCorner[1] = 0;
+		} else if (startCorner == 1) {
 			startingCorner[0] = 8;
 			startingCorner[1] = 0;
-		}
-		if (startZone == Start_Zone.Red_zone) {
+		} else if (startCorner == 2) {
+			startingCorner[0] = 8;
+			startingCorner[1] = 8;
+		} else if (startCorner == 3) {
 			startingCorner[0] = 0;
 			startingCorner[1] = 8;
 		}
@@ -191,16 +204,16 @@ public class Tests {
 		// // us localizer
 		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(State.FALLING_EDGE_STATE, navigation, odometer);
 		UltrasonicPoller usPoller = new UltrasonicPoller(medianFilter, usData, usLocalizer);
-		// // light localizer
-		LightLocalizer lightLocalizer = new LightLocalizer(navigation, odometer);
 		// odometry correction
 		OdometryCorrection odometryCorrection = new OdometryCorrection();
+		// // light localizer
+		LightLocalizer lightLocalizer = new LightLocalizer(navigation, odometer, odometryCorrection);
 		LineDetector1 lineDetector1 = new LineDetector1(meanFilter, RGBData, odometryCorrection, odometer);
 		LineDetector2 lineDetector2 = new LineDetector2(meanFilter2, RGBData2, odometryCorrection, odometer);
 		// odometer display
 		Display odometryDisplay = new Display(lcd, usLocalizer, odometryCorrection);
 		// Bridge crosser
-		Bridge bridge = new Bridge(navigation, odometer, lightLocalizer);
+		BridgeTunnel bridge = new BridgeTunnel(navigation, odometer, lightLocalizer);
 		// Scanner
 		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
 
@@ -413,14 +426,10 @@ public class Tests {
 
 					// Go to tunnel
 					bridge.travelToTunnel();
-					navigation.turnTo(0);
-					navigation.move(98, false);
-					lightLocalizer.Localize(false);
+
 					// Go to bridge
 					bridge.travelToBridge();
-					navigation.turnTo(180);
-					navigation.move(98, false);
-					lightLocalizer.Localize(false);
+
 					navigation.travelByTileSteps(7, 0);
 
 					// chose red team
@@ -447,19 +456,14 @@ public class Tests {
 					// wait for light localizer to finish
 					while (!lightLocalizer.finished) {
 					}
-					
+
 					// Go to bridge
 					bridge.travelToBridge();
-					navigation.turnTo(180);
-					navigation.move(98, false);
-					lightLocalizer.Localize(false);
-					
+
 					// Go to tunnel
 					bridge.travelToTunnel();
-					navigation.turnTo(0);
-					navigation.move(98, false);
-					lightLocalizer.Localize(false);
-					
+					// go to starting point
+					navigation.travelByTileSteps(0, 7);
 				}
 
 			}

@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.tests;
 
+import lejos.hardware.Sound;
+
 /**
  * This class is used to perform light localization
  * 
@@ -9,23 +11,37 @@ public class LightLocalizer {
 
 	Navigation nav;
 	Odometer odo;
+	OdometryCorrection oc;
 	private final double TILE_SIZE = 30.48;
 	public boolean finished = false;
-	private final double passLine = 15;
+	private final double passLine = 8;
 
-	public LightLocalizer(Navigation nav, Odometer odo) {
+	public LightLocalizer(Navigation nav, Odometer odo, OdometryCorrection oc) {
 		this.nav = nav;
 		this.odo = odo;
+		this.oc = oc;
 	}
+
 	/**
 	 * performs light localization
-	 * @param atStartPoint (true if at start point, false otherwise)
+	 * 
+	 * @param atStartPoint
+	 *            (true if at start point, false otherwise)
 	 */
 	public void Localize(boolean atStartPoint) {
 
 		// correct y or x and theta
 		Tests.correctionON = true;
-		nav.move(passLine, false);
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+		while (!oc.needsCorrection) {
+			nav.moveForward(175);
+		}
+
 		Tests.correctionON = false;
 		nav.move(-passLine, false);
 		// turn towards y or x line
@@ -40,24 +56,33 @@ public class LightLocalizer {
 		} else if (Tests.startingCorner[0] != Tests.startingCorner[1] && atStartPoint) {
 			nav.turn(-90);
 		} else if (odo.getXYT()[0] < TILE_SIZE) {
-			//nav.turnTo(90);
 			nav.turn(90);
 		} else {
-			nav.turn(-90);
-			//nav.turnTo(270);
+			nav.turn(90);
+			//nav.turn(-90);
+
 		}
 		// correct x and theta
 		Tests.correctionON = true;
-		nav.move(passLine, false);
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+		while (!oc.needsCorrection) {
+			nav.moveForward(175);
+		}
 		Tests.correctionON = false;
 		nav.move(-passLine, false);
-		// turn to correct heading
 
+		// turn to correct heading
 		if (Tests.startingCorner[1] < 1 && atStartPoint) {
 			nav.turnTo(0);
 		} else if (Tests.startingCorner[1] > 1 && atStartPoint) {
 			nav.turnTo(180);
 		}
+		Sound.twoBeeps();
 		finished = true;
 	}
 
