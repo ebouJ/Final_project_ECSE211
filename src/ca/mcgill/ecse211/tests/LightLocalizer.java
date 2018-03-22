@@ -14,7 +14,7 @@ public class LightLocalizer {
 	OdometryCorrection oc;
 	private final double TILE_SIZE = 30.48;
 	public boolean finished = false;
-	private final double passLine = 8;
+	private final double passLine = 9;
 
 	public LightLocalizer(Navigation nav, Odometer odo, OdometryCorrection oc) {
 		this.nav = nav;
@@ -47,13 +47,8 @@ public class LightLocalizer {
 
 		// turn 90 deg towards x or y line
 		if ((Tests.startCorner == 0 || Tests.startCorner == 3) && atStartPoint) {
-			// if (Tests.startingCorner[0] == Tests.startingCorner[1] && atStartPoint) {
-			// nav.turn(90);
 			nav.turnTo(90);
-			// } else if (Tests.startingCorner[0] != Tests.startingCorner[1] &&
-			// atStartPoint) {
 		} else if ((Tests.startCorner == 1 || Tests.startCorner == 2) && atStartPoint) {
-			// nav.turn(-90);
 			nav.turnTo(270);
 		} else if (odo.getXYT()[0] < TILE_SIZE) {
 			nav.turn(90);

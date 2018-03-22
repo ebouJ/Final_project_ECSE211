@@ -74,10 +74,10 @@ public class Tests {
 	// public static final double[] upperCorner = { 7, 7 };
 
 	// Possible Starting Corners
-	// public static double startCorner = 0; // (0,0)
+	public static double startCorner = 0; // (0,0)
 	// public static double startCorner = 1; //(8,0)
 	// public static double startCorner = 2; //(8,8)
-	public static double startCorner = 3; //(0,8)
+	// public static double startCorner = 3; //(0,8)
 
 	// Starting corner for DEMO
 	public static double[] startingCorner = new double[2];
@@ -98,8 +98,8 @@ public class Tests {
 	};
 
 	// Set starting zone (for testing)
-	// public static Start_Zone startZone = Start_Zone.Green_Zone;
-	public static Start_Zone startZone = Start_Zone.Red_zone;
+	public static Start_Zone startZone = Start_Zone.Green_Zone;
+	// public static Start_Zone startZone = Start_Zone.Red_zone;
 
 	// Target Block
 	public static BlockColor tb = BlockColor.BLUE;

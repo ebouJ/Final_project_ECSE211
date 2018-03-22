@@ -39,26 +39,32 @@ public class BridgeTunnel {
 		// bridge is parallel to the y axis
 		if (Math.abs(Tests.bridgeLocation_LL[0] - Tests.bridgeLocation_UR[0]) < 2) {
 			// if we approach the bridge at UR
-			if (!LLnearestPoint(Tests.bridgeLocation_UR, Tests.bridgeLocation_LL)) {
+			if (!(LLnearestPoint(Tests.bridgeLocation_UR, Tests.bridgeLocation_LL))) {
 				double x = Tests.bridgeLocation_UR[0];
 				double y = Tests.bridgeLocation_UR[1];
 				x = x - 1;
-				// nav.travelByTileSteps(x, y + 1);
-				// nav.turnTo(180);
-
+				// travel to front of bridge
 				nav.travelByTileSteps(x, y);
-
-				nav.turnTo(180);
+				// cross bridge
 				nav.travelToTile(Tests.bridgeLocation_LL[0], Tests.bridgeLocation_LL[1] - 1);
+				// Localize
 				ll.Localize(false);
-				// if we approach the tunnel at UR
-			} else {
-				Sound.beep();
+			}
+			// if we approach the bridge at LL
+			else {
+				double x = Tests.bridgeLocation_LL[0];
+				double y = Tests.bridgeLocation_LL[1];
+				// travel to front of bridge
+				nav.travelByTileSteps(x, y - 1);
+				// cross bridge
+				nav.travelToTile(Tests.bridgeLocation_UR[0] - 1, Tests.bridgeLocation_UR[1]);
+				// Localize
+				ll.Localize(false);
 			}
 		}
 		// bridge is parallel to the x axis
 		else {
-
+			// TO DO
 		}
 
 		finished = true;
@@ -72,26 +78,38 @@ public class BridgeTunnel {
 			if (LLnearestPoint(Tests.tunnelLocation_UR, Tests.tunnelLocation_LL)) {
 				double x = Tests.tunnelLocation_LL[0];
 				double y = Tests.tunnelLocation_LL[1];
+				// Travel to front of tunnel
 				nav.travelByTileSteps(x, y - 1);
-				// nav.turnTo(0);
+				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
 				while (!ll.finished) {
 				}
-				// nav.travelToTile(x, y-2);
-				// nav.travelByTileSteps(x, y - 1);
-				// nav.turnTo(0);
+				// Cross tunnel
 				nav.travelToTile(Tests.tunnelLocation_UR[0] - 1, Tests.tunnelLocation_UR[1]);
-				// if we approach the tunnel at UR
-			} else {
-				Sound.beep();
 			}
-			// tunnel is parallel to the x axis
-		} else {
+			// if we approach the tunnel at UR
+			else {
+				double x = Tests.tunnelLocation_UR[0];
+				double y = Tests.tunnelLocation_UR[1];
+				x = x - 1;
+				// travel to front of tunnel
+				nav.travelByTileSteps(x, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
+				// cross bridge
+				nav.travelToTile(Tests.tunnelLocation_LL[0], Tests.tunnelLocation_LL[1] - 1);
+			}
+		} 
+		// tunnel is parallel to the x axis
+		else {
+			//TO DO
 		}
 
 		finished = true;
-
 	}
 
 	/**
