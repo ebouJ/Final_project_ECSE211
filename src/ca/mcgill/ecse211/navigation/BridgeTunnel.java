@@ -1,5 +1,8 @@
-package ca.mcgill.ecse211.tests;
+package ca.mcgill.ecse211.navigation;
 
+import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.tests.LightLocalizer;
 import lejos.hardware.Sound;
 
 /**
@@ -131,11 +134,7 @@ public class BridgeTunnel {
 		double distUR = Math.hypot(xUR, yUR);
 		double distLL = Math.hypot(xLL, yLL);
 
-		if (distLL < distUR) {
-			return true;
-		} else {
-			return false;
-		}
+		return distLL < distUR;
 	}
 
 }

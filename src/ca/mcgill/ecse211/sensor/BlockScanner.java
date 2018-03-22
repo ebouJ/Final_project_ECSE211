@@ -1,7 +1,9 @@
-package ca.mcgill.ecse211.tests;
+package ca.mcgill.ecse211.sensor;
 
 import java.util.HashMap;
 
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
 
 /**

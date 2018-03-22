@@ -1,5 +1,9 @@
 package ca.mcgill.ecse211.tests;
 
+import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.hardware.Sound;
 
 /**

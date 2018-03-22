@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.tests;
 
+import ca.mcgill.ecse211.Final_Project.ColorIdentifier;
 import lejos.hardware.lcd.TextLCD;
 
 /**

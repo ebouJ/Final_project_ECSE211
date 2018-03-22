@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.tests;
+package ca.mcgill.ecse211.Final_Project;
 
 import java.util.Arrays;
 import java.io.*;

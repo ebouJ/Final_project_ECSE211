@@ -1,10 +1,13 @@
-package ca.mcgill.ecse211.tests;
+package ca.mcgill.ecse211.Final_Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.mcgill.ecse211.tests.ColorIdentifier.BlockColor;
+import ca.mcgill.ecse211.Final_Project.ColorIdentifier.BlockColor;
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.sensor.BlockScanner;
 import lejos.hardware.Sound;
 
 /**

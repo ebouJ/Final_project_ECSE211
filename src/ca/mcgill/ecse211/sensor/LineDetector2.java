@@ -1,6 +1,9 @@
-package ca.mcgill.ecse211.tests;
+package ca.mcgill.ecse211.sensor;
 
 
+import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.robotics.SampleProvider;
 
 /**
@@ -58,7 +61,7 @@ public class LineDetector2 extends Thread {
 	 * return the second light level as a float
 	 */
 	public float getLightLevel2() {
-		return lightLevel2;
+		return this.lightLevel2;
 	}
 
 }

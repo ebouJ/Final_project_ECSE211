@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.tests;
 
 import java.text.DecimalFormat;
 
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometerExceptions;
+import ca.mcgill.ecse211.odometer.OdometryCorrection;
+import ca.mcgill.ecse211.sensor.UltrasonicLocalizer;
 import lejos.hardware.lcd.TextLCD;
 
 /**
