@@ -67,18 +67,12 @@ public class Main {
 	private static float[] RGBData2;
 
 	// Constants (Adjust these for better performance)
-	public static final double WHEEL_RAD = 2.1; //1.7
-	public static final double TRACK = 14.8; // 16.0
+	public static final double WHEEL_RAD = 2.1;
+	public static final double TRACK = 14.8;
   
-	// Positions
-	// public static final double[] lowerCorner = { 3, 3 };
-	// public static final double[] upperCorner = { 7, 7 };
 
 	// Possible Starting Corners
-	public static double startCorner; //= 0; // (0,0)
-	// public static double startCorner = 1; //(8,0)
-	// public static double startCorner = 2; //(8,8)
-	// public static double startCorner = 3; //(0,8)
+	public static double startCorner; 
 	
 	// Starting corner for DEMO
 	public static double[] startingCorner = new double[2];
@@ -122,12 +116,8 @@ public class Main {
 		  colors.put(4, "White");
 		 
 		  WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER,ENABLE_DEBUG_WIFI_PRINT); 
-// {"BR_UR_y":8,"BR_LL_x":5,"BR_UR_x":7,"BR_LL_y":6,"RedTeam":2,"SR_UR_y":0,"SR_UR_x":0,"GreenCorner":4,"Green_UR_y":0,"Green_UR_x":0,"OG":99,"Red_UR_y":0,"Red_UR_x":0,"SG_UR_x":0,"SG_UR_y":0,"SR_LL_y":0,"RedCorner":1,"SR_LL_x":0,"GreenTeam":0,"SG_LL_y":0,"TN_UR_y":4,"SG_LL_x":0,"TN_UR_x":3,"OR":88,"Red_LL_y":0,"TN_LL_x":1,"TN_LL_y":2,"Red_LL_x":0,"Green_LL_y":0,"Green_LL_x":0}		  try {
 		      try {
 		  	  Map data = conn.getData();
-		      // Example 1: Print out all received data
-		      System.out.println(data);
-		      // Example 2 : Print out specific values
 		      int redTeam = ((Long) data.get("RedTeam")).intValue();
 		      int greenTeam = ((Long) data.get("GreenTeam")).intValue();
 		      int greenOponentFlag = ((Long) data.get("OG")).intValue();
