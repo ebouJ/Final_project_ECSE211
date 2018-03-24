@@ -104,13 +104,13 @@ public class LightLocalizer {
 			nav.travelToTile(x + 1, y + 1);
 		}
 		else if (Main.startCorner == 1 && atStartPoint) {
-			nav.travelToTile(x - 1, y + 1);
+			nav.travelToTile(x - 2, y + 1);
 		}
 		else if (Main.startCorner == 2 && atStartPoint) {
-			nav.travelToTile(x - 1, y - 1);
+			nav.travelToTile(x - 2, y-2);
 		}
 		else if (Main.startCorner == 3 && atStartPoint) {
-			nav.travelToTile(x + 1, y - 1);
+			nav.travelToTile(x + 1, y-2);
 		}
 
 		finished = true;

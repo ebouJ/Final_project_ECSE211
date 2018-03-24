@@ -38,7 +38,7 @@ public class Main {
 
 	private static final String SERVER_IP = "192.168.2.11";
 	private static final int TEAM_NUMBER = 2;
-	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
+	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
@@ -103,7 +103,7 @@ public class Main {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
-		System.out.println("Running");
+		//System.out.println("Running");
 		// Set up ultrasonic sensor and filter for localization
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
@@ -162,6 +162,7 @@ public class Main {
 		lineDeterctor1Thread.start();
 		lineDeterctor2Thread.start();
 		getWifiParameter();
+		lcd.clear();
 		usLocalizer.start();
 		odoCorrectionThread.start();
 		while (!usLocalizer.finished) {
@@ -171,10 +172,10 @@ public class Main {
 		// wait for light localizer to finish
 		while (!lightLocalizer.finished) {
 		}
-		// Go to tunnel
-		bridge.travelToTunnel();
+
 		// Go to bridge
-		bridge.travelToBridge();
+		travelBaseOnStartingPosition(bridge);
+
 
 	}
 
@@ -189,6 +190,17 @@ public class Main {
 			tb = BlockColor.WHITE;
 		}
 
+	}
+	
+	
+	private static void travelBaseOnStartingPosition(BridgeTunnel bridge) {
+		if(startZone ==  Start_Zone.Red_Zone) {
+			bridge.travelToBridge();
+			bridge.travelToTunnel();
+		}else {
+			bridge.travelToTunnel();
+			bridge.travelToBridge();
+		}
 	}
 
 	private static void assignStartingCoordinate(double corner) {
@@ -243,7 +255,7 @@ public class Main {
 			tunnelLocation_UR[1] = ((Long) data.get("TN_UR_y")).intValue();
 
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+			//System.err.println("Error: " + e.getMessage());
 		}
 	}
 
