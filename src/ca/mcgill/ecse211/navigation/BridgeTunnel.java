@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.navigation;
 
-import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.Final_Project.Main;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.tests.LightLocalizer;
 import lejos.hardware.Sound;
@@ -36,27 +36,27 @@ public class BridgeTunnel {
 	// TODO : Still need to fix this (only works from +y direction)
 	public void travelToBridge() {
 		// bridge is parallel to the y axis
-		if (Math.abs(Tests.bridgeLocation_LL[0] - Tests.bridgeLocation_UR[0]) < 2) {
+		if (Math.abs(Main.bridgeLocation_LL[0] - Main.bridgeLocation_UR[0]) < 2) {
 			// if we approach the bridge at UR
-			if (!(LLnearestPoint(Tests.bridgeLocation_UR, Tests.bridgeLocation_LL))) {
-				double x = Tests.bridgeLocation_UR[0];
-				double y = Tests.bridgeLocation_UR[1];
+			if (!(LLnearestPoint(Main.bridgeLocation_UR, Main.bridgeLocation_LL))) {
+				double x = Main.bridgeLocation_UR[0];
+				double y = Main.bridgeLocation_UR[1];
 				x = x - 1;
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y);
 				// cross bridge
-				nav.travelToTile(Tests.bridgeLocation_LL[0], Tests.bridgeLocation_LL[1] - 1);
+				nav.travelToTile(Main.bridgeLocation_LL[0], Main.bridgeLocation_LL[1] - 1);
 				// Localize
 				ll.Localize(false);
 			}
 			// if we approach the bridge at LL
 			else {
-				double x = Tests.bridgeLocation_LL[0];
-				double y = Tests.bridgeLocation_LL[1];
+				double x = Main.bridgeLocation_LL[0];
+				double y = Main.bridgeLocation_LL[1];
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y - 1);
 				// cross bridge
-				nav.travelToTile(Tests.bridgeLocation_UR[0] - 1, Tests.bridgeLocation_UR[1]);
+				nav.travelToTile(Main.bridgeLocation_UR[0] - 1, Main.bridgeLocation_UR[1]);
 				// Localize
 				ll.Localize(false);
 			}
@@ -72,11 +72,11 @@ public class BridgeTunnel {
 
 	public void travelToTunnel() {
 		// tunnel is parallel to the y axis
-		if (Math.abs(Tests.tunnelLocation_LL[0] - Tests.tunnelLocation_UR[0]) < 2) {
+		if (Math.abs(Main.tunnelLocation_LL[0] - Main.tunnelLocation_UR[0]) < 2) {
 			// if we approach the tunnel at LL
-			if (LLnearestPoint(Tests.tunnelLocation_UR, Tests.tunnelLocation_LL)) {
-				double x = Tests.tunnelLocation_LL[0];
-				double y = Tests.tunnelLocation_LL[1];
+			if (LLnearestPoint(Main.tunnelLocation_UR, Main.tunnelLocation_LL)) {
+				double x = Main.tunnelLocation_LL[0];
+				double y = Main.tunnelLocation_LL[1];
 				// Travel to front of tunnel
 				nav.travelByTileSteps(x, y - 1);
 				// Localize
@@ -85,12 +85,12 @@ public class BridgeTunnel {
 				while (!ll.finished) {
 				}
 				// Cross tunnel
-				nav.travelToTile(Tests.tunnelLocation_UR[0] - 1, Tests.tunnelLocation_UR[1]);
+				nav.travelToTile(Main.tunnelLocation_UR[0] - 1, Main.tunnelLocation_UR[1]);
 			}
 			// if we approach the tunnel at UR
 			else {
-				double x = Tests.tunnelLocation_UR[0];
-				double y = Tests.tunnelLocation_UR[1];
+				double x = Main.tunnelLocation_UR[0];
+				double y = Main.tunnelLocation_UR[1];
 				x = x - 1;
 				// travel to front of tunnel
 				nav.travelByTileSteps(x, y);
@@ -100,7 +100,7 @@ public class BridgeTunnel {
 				while (!ll.finished) {
 				}
 				// cross bridge
-				nav.travelToTile(Tests.tunnelLocation_LL[0], Tests.tunnelLocation_LL[1] - 1);
+				nav.travelToTile(Main.tunnelLocation_LL[0], Main.tunnelLocation_LL[1] - 1);
 			}
 		} 
 		// tunnel is parallel to the x axis

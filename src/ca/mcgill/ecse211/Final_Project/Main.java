@@ -138,7 +138,9 @@ public class Main {
 		  usPoller.start();
 		  usLocalizer.start();
 		  getWifiParameter();
-		  while (!usLocalizer.finished) {}		 
+		  while (!usLocalizer.finished) {
+			  
+		  }		 
 		  lineDeterctor1Thread.start();
 		  lineDeterctor2Thread.start();
 		  odoCorrectionThread.start();
