@@ -164,17 +164,18 @@ public class UltrasonicLocalizer extends Thread {
 		nav.turnTo(0);
 		nav.stop(false);
 		// correct starting position angle (due to different starting corners)
-		if (Tests.startingCorner[0] != Tests.startingCorner[1]) {
-			nav.rotate(90, false);
-			odo.setTheta(0);
+//		if (Tests.startingCorner[0] != Tests.startingCorner[1]) {
+//			nav.rotate(90, false);
+//			odo.setTheta(0);
+//		}
+		if(Tests.startCorner == 1) {
+			odo.setTheta(270);
 		}
-		// oops, wrong direction (facing a wall)...kinda hacky, I know
-		if (getDist() < FALLING_EDGE_THRESHHOLD) {
-			nav.turnTo(180);
-			Sound.beep();
-			odo.setTheta(0);
+		if(Tests.startCorner == 3) {
+			odo.setTheta(90);
 		}
-		if (Tests.startingCorner[1] > 1) {
+
+		if (Tests.startCorner == 2) {
 			odo.setTheta(180);
 		}
 		finished = true;

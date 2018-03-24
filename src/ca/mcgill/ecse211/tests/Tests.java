@@ -74,9 +74,9 @@ public class Tests {
 	// public static final double[] upperCorner = { 7, 7 };
 
 	// Possible Starting Corners
-	public static double startCorner = 0; // (0,0)
+	// public static double startCorner = 0; // (0,0)
 	// public static double startCorner = 1; //(8,0)
-	// public static double startCorner = 2; //(8,8)
+	public static double startCorner = 2; //(8,8)
 	// public static double startCorner = 3; //(0,8)
 
 	// Starting corner for DEMO
