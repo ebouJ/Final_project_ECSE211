@@ -32,10 +32,6 @@ public class BridgeTunnel {
 	/**
 	 * Responsible for making the robot travel to the bridge.
 	 * 
-	 * @param x
-	 *            the value of x
-	 * @param y
-	 *            the value of x
 	 */
 	// TODO : Still need to fix this (only works from +y direction)
 	public void travelToBridge() {

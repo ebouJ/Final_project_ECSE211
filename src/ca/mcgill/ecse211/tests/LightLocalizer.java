@@ -50,10 +50,14 @@ public class LightLocalizer {
 		nav.move(-passLine, false);
 
 		// turn 90 deg towards x or y line
-		if ((Tests.startCorner == 0 || Tests.startCorner == 3) && atStartPoint) {
+		if ((Tests.startCorner == 0) && atStartPoint) {
 			nav.turnTo(90);
-		} else if ((Tests.startCorner == 1 || Tests.startCorner == 2) && atStartPoint) {
+		} else if ((Tests.startCorner == 1) && atStartPoint) {
+			nav.turnTo(0);
+		} else if ((Tests.startCorner == 2) && atStartPoint) {
 			nav.turnTo(270);
+		} else if ((Tests.startCorner == 3) && atStartPoint) {
+			nav.turnTo(180);
 		} else if (odo.getXYT()[0] < TILE_SIZE) {
 			nav.turn(90);
 		} else {
@@ -74,13 +78,28 @@ public class LightLocalizer {
 		Tests.correctionON = false;
 		nav.move(-passLine, false);
 
+		// Navigate to nearest intersection
+		double x = Tests.startingCorner[0];
+		double y = Tests.startingCorner[1];
+		if (Tests.startCorner == 0) {
+			nav.travelTo(x + 1, y + 1, true);
+		}
+		if (Tests.startCorner == 1) {
+			nav.travelTo(x - 1, y + 1, true);
+		}
+		if (Tests.startCorner == 2) {
+			nav.travelTo(x - 1, y - 1, true);
+		}
+		if (Tests.startCorner == 3) {
+			nav.travelTo(x + 1, y - 1, true);
+		}
 		// turn to correct heading
 		if (Tests.startingCorner[1] < 1 && atStartPoint) {
 			nav.turnTo(0);
 		} else if (Tests.startingCorner[1] > 1 && atStartPoint) {
 			nav.turnTo(180);
 		}
-		Sound.twoBeeps();
+
 		finished = true;
 	}
 

@@ -86,6 +86,7 @@ public class Main {
 	public static final double[] red_LL = new double[2];
 	public static final double[] green_UR = new double[2];
 	public static final double[] green_LL = new double[2];
+	
 
 	// Starting zone (Team)
 	public static enum Start_Zone {
@@ -107,54 +108,51 @@ public class Main {
 	// Flag for odometry Correction
 	public static boolean correctionON = false;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws OdometerExceptions {
 		  System.out.println("Running");
 		  // set the color mapping 
-		  colors.put(1,"Red");
-		  colors.put(2, "Blue");
-		  colors.put(3,"Yellow");
-		  colors.put(4, "White");
-		 
-		  WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER,ENABLE_DEBUG_WIFI_PRINT); 
-		      try {
-		  	  Map data = conn.getData();
-		      int redTeam = ((Long) data.get("RedTeam")).intValue();
-		      int greenTeam = ((Long) data.get("GreenTeam")).intValue();
-		      int greenOponentFlag = ((Long) data.get("OG")).intValue();
-		      int redOponentFlag = ((Long) data.get("OR")).intValue();
-		      // SET THE STARTZONE OF TEAM 2
-		      // RedCorner
-		      if(redTeam == 2) {
-		    	  	startZone = Start_Zone.Red_Zone;
-		    	  	assignBlockColor(colors.get(redOponentFlag));
-		    	  	startCorner = ((Long) data.get("RedCorner")).intValue();
-		      }else if(greenTeam == 2){
-		    	  	startZone = Start_Zone.Green_Zone;
-		    	  	assignBlockColor(colors.get(greenOponentFlag));
-		    	  	startCorner = ((Long) data.get("GreenCorner")).intValue();
-		      }
-		      
-		      // assign the starting coordinate 
-		      assignStartingCoordinate(startCorner);
-		      
-		      // set the bridge coordinate 
-		      // TODO check if all the coordinates are within the range of the board
-		      // for  now I am assuming they are going to give the right inputs
-		      bridgeLocation_UR[0] = ((Long) data.get("BR_UR_x")).intValue();
-		      bridgeLocation_UR[1] = ((Long) data.get("BR_UR_y")).intValue();
-		      bridgeLocation_LL[0] = ((Long) data.get("BR_LL_x")).intValue();
-		      bridgeLocation_LL[1] = ((Long) data.get("BR_LL_y")).intValue();
-		      tunnelLocation_LL[0] = ((Long) data.get("TN_LL_x")).intValue();
-		      tunnelLocation_LL[1] = ((Long) data.get("TN_LL_y")).intValue();
-		      tunnelLocation_UR[0] = ((Long) data.get("TN_UR_x")).intValue();
-		      tunnelLocation_UR[0] = ((Long) data.get("TN_UR_y")).intValue();
-
-		    } catch (Exception e) {
-		      System.err.println("Error: " + e.getMessage());
-		    }
+		  setColorMapping();
+		  // initialize all threads 
+		  final  TextLCD lcd = LocalEV3.get().getTextLCD();
+		  Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+		  Navigation navigation = new Navigation(odometer, leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+		  OdometryCorrection odometryCorrection = new OdometryCorrection();
+		  LightLocalizer lightLocalizer = new LightLocalizer(navigation, odometer, odometryCorrection);
+		  LineDetector1 lineDetector1 = new LineDetector1(meanFilter, RGBData, odometryCorrection, odometer);
+		  LineDetector2 lineDetector2 = new LineDetector2(meanFilter2, RGBData2, odometryCorrection, odometer);
+		  Thread odoThread = new Thread(odometer);
+		  UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(State.FALLING_EDGE_STATE, navigation, odometer);
+		  UltrasonicPoller usPoller = new UltrasonicPoller(medianFilter, usData, usLocalizer);
+		  Display odometryDisplay = new Display(lcd, usLocalizer, odometryCorrection);
+		  Thread odoDisplayThread = new Thread(odometryDisplay);
+		  Thread lineDeterctor1Thread = new Thread(lineDetector1);
+		  BridgeTunnel bridge = new BridgeTunnel(navigation, odometer, lightLocalizer);
+		  BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
+		  Thread lineDeterctor2Thread = new Thread(lineDetector2);
+		  Thread odoCorrectionThread = new Thread(odometryCorrection);
 		  
 		  
-		  
+		  // initialize four threads before receiving parameters from wifi
+	      odoThread.start();
+	      odoDisplayThread.start();
+		  usPoller.start();
+		  usLocalizer.start();
+		  getWifiParameter();
+		  while (!usLocalizer.finished) {}		 
+		  lineDeterctor1Thread.start();
+		  lineDeterctor2Thread.start();
+		  odoCorrectionThread.start();
+		// start light localization
+		  lightLocalizer.Localize(true);
+		// wait for light localizer to finish
+		  while (!lightLocalizer.finished) {}
+		// Go to bridge
+		  bridge.travelToBridge();
+		// Go to tunnel
+		  bridge.travelToTunnel();
+		// go to starting point
+		  navigation.travelByTileSteps(0, 7);
+	  
 	}
 	private static void assignBlockColor(String color) {
 		if(color == "Red") {
@@ -168,20 +166,66 @@ public class Main {
 		}
 		
 	}
-	private static void assignStartingCoordinate(double startCorner2) {
-		if (startCorner2 == 0) {
+	private static void assignStartingCoordinate(double corner) {
+		if (corner == 0) {
 		startingCorner[0] = 0;
 		startingCorner[1] = 0;
-		} else if (startCorner2 == 1) {
+		} else if (corner == 1) {
 		startingCorner[0] = 8;
 		startingCorner[1] = 0;
-		} else if (startCorner2 == 2) {
+		} else if (corner == 2) {
 		startingCorner[0] = 8;
 		startingCorner[1] = 8;
-		} else if (startCorner2 == 3) {
+		} else if (corner == 3) {
 		startingCorner[0] = 0;
 		startingCorner[1] = 8;
 		}
+	}
+	
+	private static void getWifiParameter() {
+		  WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER,ENABLE_DEBUG_WIFI_PRINT); 
+	      try {
+	  	  Map data = conn.getData();
+	      int redTeam = ((Long) data.get("RedTeam")).intValue();
+	      int greenTeam = ((Long) data.get("GreenTeam")).intValue();
+	      int greenOponentFlag = ((Long) data.get("OG")).intValue();
+	      int redOponentFlag = ((Long) data.get("OR")).intValue();
+	      // SET THE STARTZONE OF TEAM 2
+	      // RedCorner
+	      if(redTeam == 2) {
+	    	  	startZone = Start_Zone.Red_Zone;
+	    	  	assignBlockColor(colors.get(redOponentFlag));
+	    	  	startCorner = ((Long) data.get("RedCorner")).intValue();
+	      }else if(greenTeam == 2){
+	    	  	startZone = Start_Zone.Green_Zone;
+	    	  	assignBlockColor(colors.get(greenOponentFlag));
+	    	  	startCorner = ((Long) data.get("GreenCorner")).intValue();
+	      }
+	      
+	      // assign the starting coordinate 
+	      assignStartingCoordinate(startCorner);
+	      
+	      // set the bridge coordinate 
+	      // TODO check if all the coordinates are within the range of the board
+	      // for  now I am assuming they are going to pass the right inputs
+	      bridgeLocation_UR[0] = ((Long) data.get("BR_UR_x")).intValue();
+	      bridgeLocation_UR[1] = ((Long) data.get("BR_UR_y")).intValue();
+	      bridgeLocation_LL[0] = ((Long) data.get("BR_LL_x")).intValue();
+	      bridgeLocation_LL[1] = ((Long) data.get("BR_LL_y")).intValue();
+	      tunnelLocation_LL[0] = ((Long) data.get("TN_LL_x")).intValue();
+	      tunnelLocation_LL[1] = ((Long) data.get("TN_LL_y")).intValue();
+	      tunnelLocation_UR[0] = ((Long) data.get("TN_UR_x")).intValue();
+	      tunnelLocation_UR[1] = ((Long) data.get("TN_UR_y")).intValue();
+
+	    } catch (Exception e) {
+	      System.err.println("Error: " + e.getMessage());
+	    }
+	}
+	private static void setColorMapping() {
+		  colors.put(1,"Red");
+		  colors.put(2, "Blue");
+		  colors.put(3,"Yellow");
+		  colors.put(4, "White");
 	}
 
 }
