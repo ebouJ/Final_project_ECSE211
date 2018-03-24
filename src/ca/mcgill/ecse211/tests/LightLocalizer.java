@@ -78,19 +78,19 @@ public class LightLocalizer {
 		Main.correctionON = false;
 		nav.move(-passLine, false);
 
-		// Navigate to nearest intersection
+		// Navigate to nearest intersection (Useless but its a beta requirement)
 		double x = Main.startingCorner[0];
 		double y = Main.startingCorner[1];
-		if (Main.startCorner == 0) {
+		if (Main.startCorner == 0 && atStartPoint) {
 			nav.travelTo(x + 1, y + 1, true);
 		}
-		if (Main.startCorner == 1) {
+		else if (Main.startCorner == 1 && atStartPoint) {
 			nav.travelTo(x - 1, y + 1, true);
 		}
-		if (Main.startCorner == 2) {
+		else if (Main.startCorner == 2 && atStartPoint) {
 			nav.travelTo(x - 1, y - 1, true);
 		}
-		if (Main.startCorner == 3) {
+		else if (Main.startCorner == 3 && atStartPoint) {
 			nav.travelTo(x + 1, y - 1, true);
 		}
 		// turn to correct heading
@@ -98,6 +98,19 @@ public class LightLocalizer {
 			nav.turnTo(0);
 		} else if (Main.startingCorner[1] > 1 && atStartPoint) {
 			nav.turnTo(180);
+		}
+		//travel to middle of nearest tile
+		if (Main.startCorner == 0 && atStartPoint) {
+			nav.travelToTile(x + 1, y + 1);
+		}
+		else if (Main.startCorner == 1 && atStartPoint) {
+			nav.travelToTile(x - 1, y + 1);
+		}
+		else if (Main.startCorner == 2 && atStartPoint) {
+			nav.travelToTile(x - 1, y - 1);
+		}
+		else if (Main.startCorner == 3 && atStartPoint) {
+			nav.travelToTile(x + 1, y - 1);
 		}
 
 		finished = true;

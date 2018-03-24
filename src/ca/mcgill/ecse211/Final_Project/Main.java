@@ -159,11 +159,11 @@ public class Main {
 		odoThread.start();
 		odoDisplayThread.start();
 		usPoller.start();
-		usLocalizer.start();
 		lineDeterctor1Thread.start();
 		lineDeterctor2Thread.start();
-		odoCorrectionThread.start();
 		getWifiParameter();
+		usLocalizer.start();
+		odoCorrectionThread.start();
 		while (!usLocalizer.finished) {
 		}
 		// start light localization
@@ -171,12 +171,10 @@ public class Main {
 		// wait for light localizer to finish
 		while (!lightLocalizer.finished) {
 		}
-		// Go to bridge
-		bridge.travelToBridge();
 		// Go to tunnel
 		bridge.travelToTunnel();
-		// go to starting point
-		navigation.travelByTileSteps(0, 7);
+		// Go to bridge
+		bridge.travelToBridge();
 
 	}
 
