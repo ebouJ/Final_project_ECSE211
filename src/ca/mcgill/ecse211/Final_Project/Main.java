@@ -103,7 +103,7 @@ public class Main {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
-		//System.out.println("Running");
+		// System.out.println("Running");
 		// Set up ultrasonic sensor and filter for localization
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
@@ -124,7 +124,7 @@ public class Main {
 		rgbSample2 = colorSensor2.getMode("Red");
 		meanFilter2 = new MeanFilter(rgbSample2, rgbSample2.sampleSize());
 		RGBData2 = new float[meanFilter2.sampleSize()];
-		
+
 		// set the color mapping
 		setColorMapping();
 		// initialize all threads
@@ -154,7 +154,7 @@ public class Main {
 				System.exit(0);
 			}
 		}).start();
-		
+
 		// initialize four threads before receiving parameters from wifi
 		odoThread.start();
 		odoDisplayThread.start();
@@ -174,8 +174,7 @@ public class Main {
 		}
 
 		// Go to bridge
-		travelBaseOnStartingPosition(bridge);
-
+		travelBaseOnStartingPosition(bridge, navigation);
 
 	}
 
@@ -191,15 +190,23 @@ public class Main {
 		}
 
 	}
-	
-	
-	private static void travelBaseOnStartingPosition(BridgeTunnel bridge) {
-		if(startZone ==  Start_Zone.Red_Zone) {
+
+	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav) {
+		if (startZone == Start_Zone.Red_Zone) {
 			bridge.travelToBridge();
 			bridge.travelToTunnel();
-		}else {
+		} else {
 			bridge.travelToTunnel();
 			bridge.travelToBridge();
+		}
+		if (startCorner == 0) {
+			nav.travelByTileSteps(startingCorner[0], startingCorner[1]);
+		} else if (startCorner == 1) {
+			nav.travelByTileSteps(startingCorner[0]-1, startingCorner[1]);
+		}else if (startCorner == 2) {
+			nav.travelByTileSteps(startingCorner[0]-1, startingCorner[1]-1);
+		}else if (startCorner == 3) {
+			nav.travelByTileSteps(startingCorner[0], startingCorner[1]-1);
 		}
 	}
 
@@ -255,7 +262,7 @@ public class Main {
 			tunnelLocation_UR[1] = ((Long) data.get("TN_UR_y")).intValue();
 
 		} catch (Exception e) {
-			//System.err.println("Error: " + e.getMessage());
+			// System.err.println("Error: " + e.getMessage());
 		}
 	}
 

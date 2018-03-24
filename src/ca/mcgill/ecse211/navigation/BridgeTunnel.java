@@ -41,7 +41,6 @@ public class BridgeTunnel {
 			if (!(LLnearestPoint(Main.bridgeLocation_UR, Main.bridgeLocation_LL))) {
 				double x = Main.bridgeLocation_UR[0];
 				double y = Main.bridgeLocation_UR[1];
-				System.out.println("UR:  " +x+" , " + y );
 				x = x - 1;
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y);
@@ -54,7 +53,6 @@ public class BridgeTunnel {
 			else {
 				double x = Main.bridgeLocation_LL[0];
 				double y = Main.bridgeLocation_LL[1];
-				System.out.println("LL:  " + x+" , " + y );
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y - 1);
 				// cross bridge
@@ -124,7 +122,6 @@ public class BridgeTunnel {
 
 		double odoX = odo.getXYT()[0];
 		double odoY = odo.getXYT()[1];
-		System.out.println("odoX: " + odoX + "   odoY: " + odoY);
 		
 		// compute x and y components
 		double xUR = Math.abs(odoX - (UR[0]-1) * 30.48);
@@ -135,7 +132,6 @@ public class BridgeTunnel {
 		double distUR = Math.hypot(xUR, yUR);
 		double distLL = Math.hypot(xLL, yLL);
 		boolean b = distLL < distUR;
-		System.out.println("LL bool: " +b);
 		return b;
 	}
 
