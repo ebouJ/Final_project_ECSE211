@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.odometer;
 
-import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.Final_Project.Main;
 import lejos.hardware.Sound;
 
 /**
@@ -57,7 +57,7 @@ public class OdometryCorrection implements Runnable {
 			double theta = odometer.getXYT()[2];
 
 			// Make correction if needed
-			if (needsCorrection() && Tests.correctionON) {
+			if (needsCorrection() && Main.correctionON) {
 				Sound.beepSequenceUp();
 				verifyInputs(); //check if sensor data makes sense
 				double deltaY = y1 - y2;
