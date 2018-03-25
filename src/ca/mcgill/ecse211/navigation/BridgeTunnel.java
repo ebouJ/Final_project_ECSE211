@@ -128,7 +128,7 @@ public class BridgeTunnel {
 		// tunnel is parallel to the x axis
 		else {
 			// if we approach the tunnel at LL
-			if (LLnearestPointY(Main.tunnelLocation_UR, Main.tunnelLocation_LL, true)) {
+			if (LLnearestPointY(Main.tunnelLocation_UR, Main.tunnelLocation_LL, false)) {
 				double x = Main.tunnelLocation_LL[0];
 				double y = Main.tunnelLocation_LL[1];
 				// Travel to front of tunnel
