@@ -38,7 +38,7 @@ public class BridgeTunnel {
 		// bridge is parallel to the y axis
 		if (Math.abs(Main.bridgeLocation_LL[0] - Main.bridgeLocation_UR[0]) < 2) {
 			// if we approach the bridge at UR
-			if (!(LLnearestPoint(Main.bridgeLocation_UR, Main.bridgeLocation_LL))) {
+			if (!(LLnearestPointY(Main.bridgeLocation_UR, Main.bridgeLocation_LL, true))) {
 				double x = Main.bridgeLocation_UR[0];
 				double y = Main.bridgeLocation_UR[1];
 				x = x - 1;
@@ -63,7 +63,29 @@ public class BridgeTunnel {
 		}
 		// bridge is parallel to the x axis
 		else {
-			// TO DO
+			// if we approach the bridge at UR
+			if (!(LLnearestPointY(Main.bridgeLocation_UR, Main.bridgeLocation_LL, false))) {
+				double x = Main.bridgeLocation_UR[0];
+				double y = Main.bridgeLocation_UR[1];
+				y = y - 1;
+				// travel to front of bridge
+				nav.travelByTileSteps(x, y);
+				// cross bridge
+				nav.travelToTile(Main.bridgeLocation_LL[0] - 1, Main.bridgeLocation_LL[1]);
+				// Localize
+				ll.Localize(false);
+			}
+			// if we approach the bridge at LL
+			else {
+				double x = Main.bridgeLocation_LL[0];
+				double y = Main.bridgeLocation_LL[1];
+				// travel to front of bridge
+				nav.travelByTileSteps(x - 1, y);
+				// cross bridge
+				nav.travelToTile(Main.bridgeLocation_UR[0], Main.bridgeLocation_UR[1] - 1);
+				// Localize
+				ll.Localize(false);
+			}
 		}
 
 		finished = true;
@@ -74,7 +96,7 @@ public class BridgeTunnel {
 		// tunnel is parallel to the y axis
 		if (Math.abs(Main.tunnelLocation_LL[0] - Main.tunnelLocation_UR[0]) < 2) {
 			// if we approach the tunnel at LL
-			if (LLnearestPoint(Main.tunnelLocation_UR, Main.tunnelLocation_LL)) {
+			if (LLnearestPointY(Main.tunnelLocation_UR, Main.tunnelLocation_LL, true)) {
 				double x = Main.tunnelLocation_LL[0];
 				double y = Main.tunnelLocation_LL[1];
 				// Travel to front of tunnel
@@ -102,10 +124,38 @@ public class BridgeTunnel {
 				// cross bridge
 				nav.travelToTile(Main.tunnelLocation_LL[0], Main.tunnelLocation_LL[1] - 1);
 			}
-		} 
+		}
 		// tunnel is parallel to the x axis
 		else {
-			//TO DO
+			// if we approach the tunnel at LL
+			if (LLnearestPointY(Main.tunnelLocation_UR, Main.tunnelLocation_LL, true)) {
+				double x = Main.tunnelLocation_LL[0];
+				double y = Main.tunnelLocation_LL[1];
+				// Travel to front of tunnel
+				nav.travelByTileSteps(x - 1, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
+				// Cross tunnel
+				nav.travelToTile(Main.tunnelLocation_UR[0], Main.tunnelLocation_UR[1] - 1);
+			}
+			// if we approach the tunnel at UR
+			else {
+				double x = Main.tunnelLocation_UR[0];
+				double y = Main.tunnelLocation_UR[1];
+				y = y - 1;
+				// travel to front of tunnel
+				nav.travelByTileSteps(x, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
+				// cross bridge
+				nav.travelToTile(Main.tunnelLocation_LL[0] - 1, Main.tunnelLocation_LL[1]);
+			}
 		}
 
 		finished = true;
@@ -118,14 +168,21 @@ public class BridgeTunnel {
 	 * @param LL
 	 * @return true if LL is nearest point, false otherwise
 	 */
-	private boolean LLnearestPoint(double[] UR, double[] LL) {
+	private boolean LLnearestPointY(double[] UR, double[] LL, boolean Yaxis) {
 
 		double odoX = odo.getXYT()[0];
 		double odoY = odo.getXYT()[1];
-		
+
 		// compute x and y components
-		double xUR = Math.abs(odoX - (UR[0]-1) * 30.48);
-		double yUR = Math.abs(odoY - UR[1] * 30.48);
+		double xUR;
+		double yUR;
+		if (Yaxis) {
+			xUR = Math.abs(odoX - (UR[0] - 1) * 30.48);
+			yUR = Math.abs(odoY - UR[1] * 30.48);
+		} else {
+			xUR = Math.abs(odoX - (UR[0]) * 30.48);
+			yUR = Math.abs(odoY - (UR[1] - 1) * 30.48);
+		}
 		double xLL = Math.abs(odoX - LL[0] * 30.48);
 		double yLL = Math.abs(odoY - LL[1] * 30.48);
 		// compute hypotenuses
