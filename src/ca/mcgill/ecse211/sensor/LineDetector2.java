@@ -1,7 +1,7 @@
 package ca.mcgill.ecse211.sensor;
 
 
-import ca.mcgill.ecse211.Final_Project.Main;
+import ca.mcgill.ecse211.Final_Project.Tests;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.robotics.SampleProvider;
@@ -46,7 +46,7 @@ public class LineDetector2 extends Thread {
 				lightLevel2 = lightData2[0];
 			}
 			// detect lines and record data
-			if (lightLevel2 < LIGHT_THRESHOLD && Main.correctionON) {
+			if (lightLevel2 < LIGHT_THRESHOLD && Tests.correctionON) {
 				oc.x2 = odo.getXYT()[0] + sensorCorrection;
 				oc.y2 = odo.getXYT()[1] + sensorCorrection;
 			}

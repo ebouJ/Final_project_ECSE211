@@ -109,7 +109,7 @@ public class Search extends Thread {
 	public int checkForBlocksColor() {
 		if (rgb.getBlockDetected()) {
 			System.out.println("Object detected! " + rgb.getBlockColor());
-			if (rgb.getBlockColor().equals(Main.tb)) {
+			if (rgb.getBlockColor().equals(Tests.tb)) {
 				Sound.beep(); // target block is found
 				return 1;
 			} else {

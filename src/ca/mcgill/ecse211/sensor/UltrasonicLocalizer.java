@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.sensor;
 
-import ca.mcgill.ecse211.Final_Project.Main;
+import ca.mcgill.ecse211.Final_Project.Tests;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
@@ -149,15 +149,15 @@ public class UltrasonicLocalizer extends Thread {
 			break;
 		}
 		// set x and y to starting point
-		if (Main.startingCorner[1] < 1) {
-			odo.setY(TILE_SIZE * Main.startingCorner[1] + TILE_SIZE / 2);
-		} else if (Main.startingCorner[1] > 1) {
-			odo.setY(TILE_SIZE * Main.startingCorner[1] - TILE_SIZE / 2);
+		if (Tests.startingCorner[1] < 1) {
+			odo.setY(TILE_SIZE * Tests.startingCorner[1] + TILE_SIZE / 2);
+		} else if (Tests.startingCorner[1] > 1) {
+			odo.setY(TILE_SIZE * Tests.startingCorner[1] - TILE_SIZE / 2);
 		}
-		if (Main.startingCorner[0] < 1) {
-			odo.setX(TILE_SIZE * Main.startingCorner[0] + TILE_SIZE / 2);
-		} else if (Main.startingCorner[0] > 1) {
-			odo.setX(TILE_SIZE * Main.startingCorner[0] - TILE_SIZE / 2);
+		if (Tests.startingCorner[0] < 1) {
+			odo.setX(TILE_SIZE * Tests.startingCorner[0] + TILE_SIZE / 2);
+		} else if (Tests.startingCorner[0] > 1) {
+			odo.setX(TILE_SIZE * Tests.startingCorner[0] - TILE_SIZE / 2);
 		}
 
 		// update odometer's heading
@@ -171,14 +171,14 @@ public class UltrasonicLocalizer extends Thread {
 //			nav.rotate(90, false);
 //			odo.setTheta(0);
 //		}
-		if(Main.startCorner == 1) {
+		if(Tests.startCorner == 1) {
 			odo.setTheta(270);
 		}
-		if(Main.startCorner == 3) {
+		if(Tests.startCorner == 3) {
 			odo.setTheta(90);
 		}
 
-		if (Main.startCorner == 2) {
+		if (Tests.startCorner == 2) {
 			odo.setTheta(180);
 		}
 		finished = true;
