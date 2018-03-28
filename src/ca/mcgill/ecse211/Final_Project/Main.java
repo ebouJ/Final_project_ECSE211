@@ -36,7 +36,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.11";
+	private static final String SERVER_IP = "192.168.2.3";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
