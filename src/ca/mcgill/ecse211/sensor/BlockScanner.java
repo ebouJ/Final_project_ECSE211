@@ -24,6 +24,13 @@ public class BlockScanner extends Thread {
 	private float smallestDistance = Float.MAX_VALUE;
 	private double smallestAngle = Double.MAX_VALUE;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param nav
+	 * @param us
+	 * @param odo
+	 */
 	public BlockScanner(Navigation nav, UltrasonicPoller us, Odometer odo) {
 		this.nav = nav;
 		this.us = us;
@@ -31,45 +38,46 @@ public class BlockScanner extends Thread {
 	}
 
 	/**
-	 * Scan method
+	 * Scans search zone to find a block
 	 * 
+	 * @return true if block was found, false otherwise
 	 */
-
 	public synchronized boolean Scan() {
 		// a timer to scan 90 degrees forward and backwards
 		// put all the distances , and angles measured in the hashMap
 		// reset values
-		
-		// spin 90 anti-clockwise
+
+		// Scan 90 deg
 		spin(90);
+		// if we scanned a block
 		if (smallestDistance < 60f && withinSearchZone()) {
 			Sound.beep();
-			nav.turnTo(smallestAngle);
-			if(this.smallestDistance > 35) { // greater than 90 
-				nav.move(this.smallestDistance - 15,false);
-				nav.turn(-25);
-				spin(90);
-				nav.turnTo(smallestAngle);
-				nav.move(smallestDistance - 4, false);
-			}else {
-				nav.move(smallestDistance - 4, false);
-			}
+			goToBlock();
 			return true;
 		}
 		return false;
 	}
 
+	/**
+	 * Spins robot back and forth by angle and finds distance and angle of nearest
+	 * block
+	 * 
+	 * @param angle
+	 */
 	public void spin(int angle) {
+		// reset values
 		smallestDistance = Float.MAX_VALUE;
 		smallestAngle = Double.MAX_VALUE;
+		// timer to get data while rotating
 		int timer = angle == 90 ? 2000 : 4000;
-		rotate(timer,true);
-		//spin 90 counter-clockwise
-		rotate(timer,false);
-		
-	    //spin 90 anti-clockwise
+		rotate(timer, true);
+		// spin 90 counter-clockwise
+		rotate(timer, false);
+
+		// spin 90 anti-clockwise
 		smallestAngle = map.get(smallestDistance);
 	}
+
 	private void rotate(int timer, boolean clockwise) {
 		long endTimeMillisCW = System.currentTimeMillis() + timer;
 		while (true) {
@@ -93,6 +101,38 @@ public class BlockScanner extends Thread {
 		return this.smallestAngle;
 	}
 
+	private void goToBlock() {
+		Sound.beep();
+		nav.turnTo(smallestAngle);
+		// if the block is further than 35cm, approach block and scan again
+		if (this.smallestDistance > 35) { 
+			nav.move(this.smallestDistance - 15, false);
+			nav.turn(-30);
+			spin(90);
+			nav.turnTo(smallestAngle);
+			if (smallestDistance > 4) {
+				nav.move(smallestDistance - 4, false);
+			} else {
+				goCloser();
+			}
+		} 
+		// Block is near by, go directly to it
+		else {
+			if (smallestDistance > 4) {
+				nav.move(smallestDistance - 4, false);
+			} else {
+				goCloser();
+			}
+		}
+
+	}
+
+	private void goCloser() {
+		while (us.getDistance() > 3) {
+			nav.moveForward(100);
+		}
+	}
+
 	private boolean withinSearchZone() {
 		boolean withInX = false;
 		boolean withInY = false;
@@ -112,6 +152,12 @@ public class BlockScanner extends Thread {
 		}
 
 		return withInY && withInX;
+	}
+	public void sleepThread(float seconds) {
+		try {
+			Thread.sleep((long) (seconds * 1000f));
+		} catch (Exception e) {
+		}
 	}
 
 }

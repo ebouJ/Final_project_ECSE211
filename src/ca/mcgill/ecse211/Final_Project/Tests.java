@@ -102,8 +102,8 @@ public class Tests {
 	public static final double[] green_LL = new double[2];
 
 	
-	public static final double[] SR_UR = {4,4};
-	public static final double[] SR_LL = {1,1}; 
+	public static final double[] SR_UR = {3,3};
+	public static final double[] SR_LL = {0,0}; 
 
 	public static final double[] searchRegion_UR = {};
 	public static final double[] searchRegion_LR = {};
