@@ -107,20 +107,31 @@ public class Search extends Thread {
 			}
 			// Rotate to double check
 			else {
-				// Rotate to double check
+				// Rotate to double check... I want to die
 				nav.rotate(12.5, false);
-				sleepThread(100);
+				if (isTargetBlock() == 1) {
+					return State.FINISHED;
+				} else if (isTargetBlock() == 2) {
+					return State.SEARCHING;
+				}
 				nav.rotate(12.5, false);
-				sleepThread(100);
 				if (isTargetBlock() == 1) {
 					return State.FINISHED;
 				} else if (isTargetBlock() == 2) {
 					return State.SEARCHING;
 				}
 				nav.rotate(-25, false);
-				sleepThread(100);
+				if (isTargetBlock() == 1) {
+					return State.FINISHED;
+				} else if (isTargetBlock() == 2) {
+					return State.SEARCHING;
+				}
 				nav.rotate(-12.5, false);
-				sleepThread(100);
+				if (isTargetBlock() == 1) {
+					return State.FINISHED;
+				} else if (isTargetBlock() == 2) {
+					return State.SEARCHING;
+				}
 				nav.rotate(-12.5, false);
 				if (isTargetBlock() == 1) {
 					return State.FINISHED;
@@ -129,8 +140,6 @@ public class Search extends Thread {
 				}
 				// Target was not found, keep searching
 				goToNextPoint();
-				//turnToRightHeading();
-				//nav.turnTo(0); // we still need to correct this
 				return State.SEARCHING;
 			}
 		}
@@ -150,8 +159,6 @@ public class Search extends Thread {
 		else if (result == 2) {
 			nav.moveBackward();
 			goToNextPoint();
-			//turnToRightHeading();
-			//nav.turnTo(0);
 			return 2;
 		}
 		return 3;
