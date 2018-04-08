@@ -77,26 +77,25 @@ public class Search extends Thread {
 	}
 
 	private State state_searching() {
-		// remember the heading before the scan
-		lastHeading = nav.getHeading();
 		// Call search
 		if (firstScan) {
 			goToFirstPoint();
 			firstScan = false;
+		} else {
+			goToNextPoint();
 		}
 		if (bs.Scan()) {
-			// if (fuckOffScan) { 
+			// if (fuckOffScan) {
 			nav.stop(false);
 			return State.FOUNDBLOCK;
 		}
 		// No block was found
 		else {
-			goToNextPoint();
 			return State.SEARCHING;
 		}
 
 	}
-	
+
 	private State state_foundblock() {
 		// Check if block is the target
 		synchronized (lock1) {
@@ -122,49 +121,56 @@ public class Search extends Thread {
 				}
 				nav.rotate(-25, false);
 				if (isTargetBlock() == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (isTargetBlock() == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
 				if (isTargetBlock() == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (isTargetBlock() == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
 				if (isTargetBlock() == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (isTargetBlock() == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
-				// Target was not found, keep searching
-				goToNextPoint();
+				// Target was not found, keep searching (Default)
 				return State.SEARCHING;
 			}
 		}
 	}
+
 	/**
 	 * determines if a block is the target block
+	 * 
 	 * @return 1 if target block, 2 otherwise
 	 */
 	private int isTargetBlock() {
 		int result = checkForBlocksColor();
-		//if target block
+		// if target block
 		if (result == 1) {
-			nav.moveBackward();
+			//nav.moveBackward();
 			return 1;
-		} 
+		}
 		// not target block
 		else if (result == 2) {
-			nav.moveBackward();
-			goToNextPoint();
+			//nav.moveBackward();
 			return 2;
 		}
 		return 3;
 	}
 
 	private void state_finished() {
+		nav.moveBackward();
 		this.isFinished = true;
 	}
 
@@ -193,6 +199,9 @@ public class Search extends Thread {
 	 * Takes the robot to the next point for searching
 	 */
 	private void goToNextPoint() {
+		sleepThread(300);
+		nav.moveBackward();
+		sleepThread(100);
 		if (!goDown) {
 			if (firstScan) {
 				firstScan = false;
@@ -257,22 +266,20 @@ public class Search extends Thread {
 			nav.turnTo(270);
 		}
 	}
+
 	private void turnToRightHeading() {
 		if (lastHeading == 1) {
 			nav.turnTo(0);
-		}
-		else if (lastHeading == 2) {
+		} else if (lastHeading == 2) {
 			nav.turnTo(180);
-		}
-		else if (lastHeading == 3) {
+		} else if (lastHeading == 3) {
 			nav.turnTo(90);
-		}
-		else if (lastHeading == 4) {
+		} else if (lastHeading == 4) {
 			nav.turnTo(270);
 		}
-		
-		
+
 	}
+
 	public void sleepThread(float milliseconds) {
 		try {
 			Thread.sleep((long) (milliseconds));

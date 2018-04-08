@@ -395,11 +395,6 @@ public class Navigation {
 	 * @param seconds
 	 *            the value of seconds
 	 */
-	public void sleepThread(float seconds) {
-		try {
-			Thread.sleep((long) (seconds * 1000f));
-		} catch (Exception e) {
-		}
-	}
+	
 
 }
