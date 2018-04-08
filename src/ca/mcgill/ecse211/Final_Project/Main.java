@@ -32,7 +32,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.31";
+	private static final String SERVER_IP = "192.168.2.6";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
@@ -204,11 +204,13 @@ public class Main {
 			bridge.travelToBridge();	
 			search.start();
 			while(!search.isFinished());
+			nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
 			bridge.travelToTunnel();
 		} else {
 			bridge.travelToTunnel();
 			search.start();
 			while(!search.isFinished());
+			nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
 			bridge.travelToBridge();
 		}
 		if (startCorner == 0) {

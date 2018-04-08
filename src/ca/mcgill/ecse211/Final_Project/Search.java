@@ -175,7 +175,7 @@ public class Search extends Thread {
 	}
 
 	private void state_finished() {
-		nav.travelToTile(Main.SR_UR[0]+1, Main.SR_UR[1]+1);
+		//nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
 		this.isFinished = true;
 	}
 
