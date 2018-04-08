@@ -1,7 +1,7 @@
 
 package ca.mcgill.ecse211.navigation;
 
-import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.Final_Project.Main;
 import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -117,7 +117,7 @@ public class Navigation {
 	 *            the value of y
 	 */
 	public void travelByTileSteps(double x, double y) {
-		Tests.correctionON = true;
+		Main.correctionON = true;
 		if ((odo.getXYT()[1] / TILE_SIZE) <= y + 1) {
 			for (int i = (int) (odo.getXYT()[1] / TILE_SIZE) + 1; i <= y; i++) {
 				travelToTile(Math.floor(odo.getXYT()[0] / TILE_SIZE), i);
@@ -137,7 +137,7 @@ public class Navigation {
 				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
 			} 
 		}
-		Tests.correctionON = false;
+		Main.correctionON = false;
 	}
 
 	/**
@@ -395,11 +395,6 @@ public class Navigation {
 	 * @param seconds
 	 *            the value of seconds
 	 */
-	public void sleepThread(float seconds) {
-		try {
-			Thread.sleep((long) (seconds * 1000f));
-		} catch (Exception e) {
-		}
-	}
+	
 
 }

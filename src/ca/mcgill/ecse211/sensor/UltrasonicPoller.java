@@ -22,7 +22,7 @@ public class UltrasonicPoller extends Thread {
 
 	public void run() {
 		//fetch filtered samples until us localization is finished
-		while (!ul.finished) {
+		while (true) {
 			sample.fetchSample(usData, 0);
 			ul.setDist(usData[0] * 100f);
 			distance = usData[0];

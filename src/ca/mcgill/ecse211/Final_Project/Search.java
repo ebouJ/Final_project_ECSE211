@@ -20,8 +20,8 @@ public class Search extends Thread {
 	private BlockScanner bs;
 	int searchIndexY = 0;
 	int searchIndexX = 0;
-	double currentY = Tests.SR_LL[1];
-	double currentX = Tests.SR_LL[0];
+	double currentY = Main.SR_LL[1];
+	double currentX = Main.SR_LL[0];
 	boolean firstScan = true;
 	boolean goDown = false;
 	public static boolean isFinished = false;
@@ -77,26 +77,25 @@ public class Search extends Thread {
 	}
 
 	private State state_searching() {
-		// remember the heading before the scan
-		lastHeading = nav.getHeading();
 		// Call search
 		if (firstScan) {
 			goToFirstPoint();
 			firstScan = false;
+		}else {
+			goToNextPoint();
 		}
 		if (bs.Scan()) {
-			// if (fuckOffScan) { 
+			// if (fuckOffScan) {
 			nav.stop(false);
 			return State.FOUNDBLOCK;
 		}
 		// No block was found
 		else {
-			goToNextPoint();
 			return State.SEARCHING;
 		}
 
 	}
-	
+
 	private State state_foundblock() {
 		// Check if block is the target
 		synchronized (lock1) {
@@ -109,62 +108,74 @@ public class Search extends Thread {
 			else {
 				// Rotate to double check... I want to die
 				nav.rotate(12.5, false);
-				if (isTargetBlock() == 1) {
+				int result = isTargetBlock();
+				if (result == 1) {
 					return State.FINISHED;
-				} else if (isTargetBlock() == 2) {
+				} else if (result == 2) {
 					return State.SEARCHING;
 				}
 				nav.rotate(12.5, false);
-				if (isTargetBlock() == 1) {
+				result = isTargetBlock();
+				if (result == 1) {
 					return State.FINISHED;
-				} else if (isTargetBlock() == 2) {
+				} else if (result == 2) {
 					return State.SEARCHING;
 				}
 				nav.rotate(-25, false);
-				if (isTargetBlock() == 1) {
+				result = isTargetBlock();
+				if (result == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
-				} else if (isTargetBlock() == 2) {
+				} else if (result == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
-				if (isTargetBlock() == 1) {
+				result = isTargetBlock();
+				if (result == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
-				} else if (isTargetBlock() == 2) {
+				} else if (result == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
-				if (isTargetBlock() == 1) {
+				result = isTargetBlock();
+				if (result == 1) {
+					//nav.moveBackward();
 					return State.FINISHED;
-				} else if (isTargetBlock() == 2) {
+				} else if (result == 2) {
+					//nav.moveBackward();
 					return State.SEARCHING;
 				}
-				// Target was not found, keep searching
-				goToNextPoint();
+				// Target was not found, keep searching (Default)
 				return State.SEARCHING;
 			}
 		}
 	}
+
 	/**
 	 * determines if a block is the target block
+	 * 
 	 * @return 1 if target block, 2 otherwise
 	 */
 	private int isTargetBlock() {
 		int result = checkForBlocksColor();
-		//if target block
+		// if target block
 		if (result == 1) {
 			nav.moveBackward();
 			return 1;
-		} 
+		}
 		// not target block
 		else if (result == 2) {
 			nav.moveBackward();
-			goToNextPoint();
 			return 2;
 		}
 		return 3;
 	}
 
 	private void state_finished() {
+		nav.travelToTile(Main.SR_UR[0]+1, Main.SR_UR[1]+1);
 		this.isFinished = true;
 	}
 
@@ -174,10 +185,10 @@ public class Search extends Thread {
 	 * @return int that indicates if block is found or not
 	 */
 	public int checkForBlocksColor() {
-		if (rgb.getBlockColor().equals(Tests.tb)) {
+		if (rgb.getBlockColor().equals(Main.tb)) {
 			Sound.beep(); // target block is found
 			return 1;
-		} else if (!rgb.getBlockColor().equals(Tests.none)) {
+		} else if (!rgb.getBlockColor().equals(Main.none)) {
 			Sound.twoBeeps();
 			return 2;
 		} else {
@@ -193,6 +204,9 @@ public class Search extends Thread {
 	 * Takes the robot to the next point for searching
 	 */
 	private void goToNextPoint() {
+		sleepThread(300);
+		//nav.moveBackward();
+		sleepThread(100);
 		if (!goDown) {
 			if (firstScan) {
 				firstScan = false;
@@ -201,26 +215,26 @@ public class Search extends Thread {
 				nav.turnTo(0);
 			}
 
-			else if (Tests.SR_UR[1] > currentY) {
+			else if (Main.SR_UR[1] > currentY) {
 				currentY++;
 				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(0);
-				if (Tests.SR_UR[1] == currentY) {
+				if (Main.SR_UR[1] == currentY) {
 					nav.turnTo(90);
 				}
 			}
 
-			else if (Tests.SR_UR[0] > currentX) {
+			else if (Main.SR_UR[0] > currentX) {
 				currentX++;
 				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(90);
-				if (Tests.SR_UR[0] == currentX) {
+				if (Main.SR_UR[0] == currentX) {
 					nav.turnTo(180);
 				}
 			}
-			if (Tests.SR_UR[0] <= currentX) {
+			if (Main.SR_UR[0] <= currentX) {
 				goDown = true;
 			}
 		} else {
@@ -231,48 +245,34 @@ public class Search extends Thread {
 
 	private void goToFirstPoint() {
 		// if LL is the nearest point
-		nav.travelByTileSteps(Tests.SR_LL[0] - 1, Tests.SR_LL[0] - 1);
-		nav.travelTo(Tests.SR_LL[0], Tests.SR_LL[0], true);
+		nav.travelByTileSteps(Main.SR_LL[0] - 1, Main.SR_LL[1] - 1);
+		nav.travelTo(Main.SR_LL[0], Main.SR_LL[1], true);
 		nav.turnTo(0); // correct this
 		// add UR if closer...
 	}
 
 	private void goDown() {
 
-		if (Tests.SR_LL[1] < currentY) {
+		if (Main.SR_LL[1] < currentY) {
 			currentY--;
-			System.out.println(currentY);
+
 			// nav.travelByTileSteps(currentX, currentY);
 			nav.travelTo(currentX, currentY, true);
 			nav.turnTo(180);
-			if (Tests.SR_LL[1] == currentY) {
+			if (Main.SR_LL[1] == currentY) {
 				nav.turnTo(270);
 			}
 		}
 
-		else if (Tests.SR_LL[0] < currentX) {
+		else if (Main.SR_LL[0] < currentX) {
 			currentX--;
 			// nav.travelByTileSteps(currentX, currentY);
 			nav.travelTo(currentX, currentY, true);
 			nav.turnTo(270);
 		}
 	}
-	private void turnToRightHeading() {
-		if (lastHeading == 1) {
-			nav.turnTo(0);
-		}
-		else if (lastHeading == 2) {
-			nav.turnTo(180);
-		}
-		else if (lastHeading == 3) {
-			nav.turnTo(90);
-		}
-		else if (lastHeading == 4) {
-			nav.turnTo(270);
-		}
-		
-		
-	}
+
+
 	public void sleepThread(float milliseconds) {
 		try {
 			Thread.sleep((long) (milliseconds));

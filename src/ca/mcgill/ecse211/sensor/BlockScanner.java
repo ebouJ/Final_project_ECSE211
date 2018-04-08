@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.sensor;
 
 import java.util.HashMap;
 
-import ca.mcgill.ecse211.Final_Project.Tests;
+import ca.mcgill.ecse211.Final_Project.Main;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
@@ -143,11 +143,11 @@ public class BlockScanner extends Thread {
 		targetY += odo.getXYT()[1];
 
 		// if x value is within zone
-		if ((targetX > Tests.SR_LL[0] * 30.48) && (targetX < Tests.SR_UR[0] * 30.48)) {
+		if ((targetX > Main.SR_LL[0] * 30.48) && (targetX < Main.SR_UR[0] * 30.48)) {
 			withInX = true;
 		}
 		// if y value is within zone
-		if ((targetY > Tests.SR_LL[1] * 30.48) && (targetY < Tests.SR_UR[1] * 30.48)) {
+		if ((targetY > Main.SR_LL[1] * 30.48) && (targetY < Main.SR_UR[1] * 30.48)) {
 			withInY = true;
 		}
 
