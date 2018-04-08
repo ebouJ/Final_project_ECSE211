@@ -24,7 +24,7 @@ public class Search extends Thread {
 	double currentX = Main.SR_LL[0];
 	boolean firstScan = true;
 	boolean goDown = false;
-	public static boolean isFinished = false;
+	private static boolean isFinished = false;
 	boolean fuckOffScan = false;
 	int lastHeading = 0;
 
