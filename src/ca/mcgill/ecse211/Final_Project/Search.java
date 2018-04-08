@@ -99,16 +99,17 @@ public class Search extends Thread {
 	private State state_foundblock() {
 		// Check if block is the target
 		synchronized (lock1) {
-			if (isTargetBlock() == 1) {
+			int result = isTargetBlock();
+			if (result == 1) {
 				return State.FINISHED;
-			} else if (isTargetBlock() == 2) {
+			} else if (result == 2) {
 				return State.SEARCHING;
 			}
 			// Rotate to double check
 			else {
 				// Rotate to double check... I want to die
 				nav.rotate(12.5, false);
-				int result = isTargetBlock();
+				 result = isTargetBlock();
 				if (result == 1) {
 					return State.FINISHED;
 				} else if (result == 2) {
@@ -124,28 +125,22 @@ public class Search extends Thread {
 				nav.rotate(-25, false);
 				result = isTargetBlock();
 				if (result == 1) {
-					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (result == 2) {
-					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
 				result = isTargetBlock();
 				if (result == 1) {
-					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (result == 2) {
-					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				nav.rotate(-12.5, false);
 				result = isTargetBlock();
 				if (result == 1) {
-					//nav.moveBackward();
 					return State.FINISHED;
 				} else if (result == 2) {
-					//nav.moveBackward();
 					return State.SEARCHING;
 				}
 				// Target was not found, keep searching (Default)
@@ -186,7 +181,9 @@ public class Search extends Thread {
 	 */
 	public int checkForBlocksColor() {
 		if (rgb.getBlockColor().equals(Main.tb)) {
-			Sound.beep(); // target block is found
+			Sound.twoBeeps(); // target block is found
+			Sound.twoBeeps();
+			Sound.twoBeeps();
 			return 1;
 		} else if (!rgb.getBlockColor().equals(Main.none)) {
 			Sound.twoBeeps();
