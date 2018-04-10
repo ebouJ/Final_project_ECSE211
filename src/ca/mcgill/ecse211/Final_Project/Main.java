@@ -32,7 +32,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.34";
+	private static final String SERVER_IP = "192.168.2.22";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
@@ -175,7 +175,7 @@ public class Main {
 		}
 
 		// Go to bridge
-		travelBaseOnStartingPosition(bridge, navigation,scan,blockColorSensor);
+		travelBaseOnStartingPosition(bridge, navigation,scan,blockColorSensor,odometer);
 
 	}
 
@@ -192,25 +192,15 @@ public class Main {
 
 	}
 
-	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier) throws OdometerExceptions {
+	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) throws OdometerExceptions {
 		
-		//Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		//Navigation navigation = new Navigation(odometer, leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-		//UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(State.FALLING_EDGE_STATE, nav, odometer);
-		//UltrasonicPoller usPoller = new UltrasonicPoller(medianFilter, usData, usLocalizer);
-		//BlockScanner scan = new BlockScanner(nav, usPoller, odometer);
-		Search search = new Search(nav,colorIdentifier, scan);
 		if (startZone == Start_Zone.Red_Zone) {
 			bridge.travelToBridge();	
-			search.start();
-			while(!search.isFinished());
-			nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
+			Search(nav,scan,colorIdentifier,odo);
 			bridge.travelToTunnel();
 		} else {
 			bridge.travelToTunnel();
-			search.start();
-			while(!search.isFinished());
-			nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
+			Search(nav,scan,colorIdentifier,odo);
 			bridge.travelToBridge();
 		}
 		if (startCorner == 0) {
@@ -238,6 +228,31 @@ public class Main {
 			startingCorner[0] = 0;
 			startingCorner[1] = 8;
 		}
+	}
+	
+	private static void Search(Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) {
+		Search search = new Search(nav,colorIdentifier, scan, odo);
+		search.start();
+		while(!search.isFinished());
+		nav.travelTo(search.getCurentX(), search.getCurentY(),true);
+		switch(search.getCurrentAxis()) {
+			case 1: 
+				nav.travelToTile(search.getCurentX()-1, search.getCurentY());
+				break;
+			case 2: 
+				nav.travelToTile(search.getCurentX(), search.getCurentY());
+				break;	
+			case 3: 
+				nav.travelToTile(search.getCurentX(), search.getCurentY());
+				break;
+			case 4: 
+				nav.travelToTile(search.getCurentX()-1, search.getCurentY()-1);
+				nav.travelToTile(Main.SR_LL[0]-1, Main.SR_LL[1]-1);
+				break;
+			default:
+				break;
+		}
+		nav.travelByTileSteps(Main.SR_UR[0], Main.SR_UR[1]);
 	}
 
 	private static void getWifiParameter() {

@@ -1,7 +1,6 @@
 package ca.mcgill.ecse211.Final_Project;
 
-import java.util.HashMap;
-import java.util.Map;
+
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.sensor.BlockScanner;
@@ -14,19 +13,21 @@ import lejos.hardware.Sound;
 
 public class Search extends Thread {
 
+	private static final double TILE_SIZE = 30.48;
 	private Navigation nav;
 	private Odometer odometer;
 	private ColorIdentifier rgb;
 	private BlockScanner bs;
 	int searchIndexY = 0;
 	int searchIndexX = 0;
-	double currentY = Main.SR_LL[1];
-	double currentX = Main.SR_LL[0];
+	private double currentY = Main.SR_LL[1];
+	private double currentX = Main.SR_LL[0];
 	boolean firstScan = true;
 	boolean goDown = false;
 	private static boolean isFinished = false;
 	boolean fuckOffScan = false;
 	int lastHeading = 0;
+	private int currentAxis = 0;
 
 	int counter = 0;
 	private Object lock1 = new Object();
@@ -41,10 +42,11 @@ public class Search extends Thread {
 
 	private State state = State.INIT;
 
-	public Search(Navigation nav, ColorIdentifier rgb, BlockScanner bs) {
+	public Search(Navigation nav, ColorIdentifier rgb, BlockScanner bs, Odometer odo) {
 		this.nav = nav;
 		this.rgb = rgb;
 		this.bs = bs;
+		this.odometer = odo;
 	}
 
 	public void run() {
@@ -201,8 +203,6 @@ public class Search extends Thread {
 	 * Takes the robot to the next point for searching
 	 */
 	private void goToNextPoint() {
-		sleepThread(300);
-		//nav.moveBackward();
 		sleepThread(100);
 		if (!goDown) {
 			if (firstScan) {
@@ -210,9 +210,11 @@ public class Search extends Thread {
 				// nav.travelToTile(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(0);
+				this.currentAxis = 1;
 			}
 
 			else if (Main.SR_UR[1] > currentY) {
+				this.currentAxis = 1;
 				currentY++;
 				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
@@ -223,6 +225,7 @@ public class Search extends Thread {
 			}
 
 			else if (Main.SR_UR[0] > currentX) {
+				this.currentAxis = 2;
 				currentX++;
 				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
@@ -242,7 +245,10 @@ public class Search extends Thread {
 
 	private void goToFirstPoint() {
 		// if LL is the nearest point
+		//NEW
+		nav.travelByTileSteps(Main.SR_LL[0] - 1, Math.floor(odometer.getXYT()[1] / TILE_SIZE));
 		nav.travelByTileSteps(Main.SR_LL[0] - 1, Main.SR_LL[1] - 1);
+		
 		nav.travelTo(Main.SR_LL[0], Main.SR_LL[1], true);
 		nav.turnTo(0); // correct this
 		// add UR if closer...
@@ -251,6 +257,7 @@ public class Search extends Thread {
 	private void goDown() {
 
 		if (Main.SR_LL[1] < currentY) {
+			this.currentAxis = 3;
 			currentY--;
 
 			// nav.travelByTileSteps(currentX, currentY);
@@ -262,11 +269,21 @@ public class Search extends Thread {
 		}
 
 		else if (Main.SR_LL[0] < currentX) {
+			this.currentAxis = 4;
 			currentX--;
 			// nav.travelByTileSteps(currentX, currentY);
 			nav.travelTo(currentX, currentY, true);
 			nav.turnTo(270);
 		}
+	}
+	public double getCurentX() {
+		return this.currentX;
+	}
+	public double getCurentY() {
+		return this.currentY;
+	}
+	public int getCurrentAxis() {
+		return this.currentAxis;
 	}
 
 

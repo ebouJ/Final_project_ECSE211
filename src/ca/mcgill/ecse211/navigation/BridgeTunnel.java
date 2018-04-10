@@ -16,6 +16,7 @@ public class BridgeTunnel {
 	LightLocalizer ll;
 	// private final double TILE_SIZE = 30.48;
 	public boolean finished = false;
+	private boolean parallelToyAxis = false;
 
 	/**
 	 * Constructor for the Bridge class
@@ -38,6 +39,7 @@ public class BridgeTunnel {
 	public void travelToBridge() {
 		// bridge is parallel to the y axis
 		if (Math.abs(Main.bridgeLocation_LL[0] - Main.bridgeLocation_UR[0]) < 2) {
+			this.parallelToyAxis = true;
 			// if we approach the bridge at UR
 			if (!(LLnearestPointY(Main.bridgeLocation_UR, Main.bridgeLocation_LL, true))) {
 				double x = Main.bridgeLocation_UR[0];
