@@ -193,7 +193,7 @@ public class Main {
 	}
 
 	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) throws OdometerExceptions {
-		
+		// comment Search for basically Beta Demo!
 		if (startZone == Start_Zone.Red_Zone) {
 			bridge.travelToBridge();	
 			Search(nav,scan,colorIdentifier,odo);
@@ -219,14 +219,14 @@ public class Main {
 			startingCorner[0] = 0;
 			startingCorner[1] = 0;
 		} else if (corner == 1) {
-			startingCorner[0] = 8;
+			startingCorner[0] = 12;
 			startingCorner[1] = 0;
 		} else if (corner == 2) {
-			startingCorner[0] = 8;
-			startingCorner[1] = 8;
+			startingCorner[0] = 12;
+			startingCorner[1] = 12;
 		} else if (corner == 3) {
 			startingCorner[0] = 0;
-			startingCorner[1] = 8;
+			startingCorner[1] = 12;
 		}
 	}
 	
