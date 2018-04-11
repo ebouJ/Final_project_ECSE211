@@ -1,4 +1,3 @@
-
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.Final_Project.Main;
