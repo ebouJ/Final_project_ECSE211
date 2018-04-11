@@ -1,4 +1,3 @@
-
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.Final_Project.Main;
@@ -135,7 +134,7 @@ public class Navigation {
 
 			for (int i = (int) (odo.getXYT()[0] / TILE_SIZE) - 1; i >= x; i--) {
 				travelToTile(i, Math.floor(odo.getXYT()[1] / TILE_SIZE));
-			}
+			} 
 		}
 		Main.correctionON = false;
 	}
@@ -180,7 +179,6 @@ public class Navigation {
 		// set amount to rotate
 		leftMotor.rotate(convertAngle(leftRadius, width, theta), true);
 		rightMotor.rotate(-convertAngle(rightRadius, width, theta), false);
-
 	}
 
 	/**
@@ -224,7 +222,10 @@ public class Navigation {
 		}
 
 	}
-
+	public void moveBackward() {
+		move(-10,false);
+	}
+	
 	/**
 	 * Moves the robot forward by dist
 	 * 
@@ -267,6 +268,7 @@ public class Navigation {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+	
 
 	/**
 	 * Computes distance to target
@@ -351,6 +353,28 @@ public class Navigation {
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
+	/**
+	 * Gets the current heading of the robot
+	 * @return 1 if +y, 2 if -y, 3 if +x, 4 if -x, 0 otherwise
+	 */
+	public int getHeading() {
+		double theta = odo.getXYT()[2];
+		if(theta < 10 || theta > 350) {
+			return 1;
+		}
+		else if (theta < 190 && theta > 170) {
+			return 2;
+		}
+		else if (theta < 100 && theta > 80) {
+			return 3;
+		}
+		else if (theta < 280 && theta > 260) {
+			return 4;
+		}
+		else {
+			return 0;
+		}
+	}
 
 	/**
 	 * @param radius
@@ -370,11 +394,6 @@ public class Navigation {
 	 * @param seconds
 	 *            the value of seconds
 	 */
-	public void sleepThread(float seconds) {
-		try {
-			Thread.sleep((long) (seconds * 1000f));
-		} catch (Exception e) {
-		}
-	}
+	
 
 }

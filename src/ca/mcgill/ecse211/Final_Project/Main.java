@@ -16,12 +16,8 @@ import ca.mcgill.ecse211.sensor.LineDetector2;
 import ca.mcgill.ecse211.sensor.UltrasonicLocalizer;
 import ca.mcgill.ecse211.sensor.UltrasonicPoller;
 import ca.mcgill.ecse211.sensor.UltrasonicLocalizer.State;
-import ca.mcgill.ecse211.tests.OdoTestTrack;
-import ca.mcgill.ecse211.tests.BlockDisplay;
 import ca.mcgill.ecse211.tests.Display;
 import ca.mcgill.ecse211.tests.LightLocalizer;
-import ca.mcgill.ecse211.tests.OdoTestRadius;
-import ca.mcgill.ecse211.tests.OdoTestSquare;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -36,7 +32,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.3";
+	private static final String SERVER_IP = "192.168.2.36";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
@@ -66,6 +62,8 @@ public class Main {
 	// Constants (Adjust these for better performance)
 	public static final double WHEEL_RAD = 2.1;
 	public static final double TRACK = 14.8;
+	public static final double[] SR_UR = new double[2];
+	public static final double[] SR_LL = new double[2]; 
 
 	// Possible Starting Corners
 	public static double startCorner;
@@ -97,7 +95,7 @@ public class Main {
 
 	// Target Block
 	public static BlockColor tb;
-	private static ColorIdentifier blockColorSensor;
+	public static BlockColor none = BlockColor.NONE;
 
 	// Flag for odometry Correction
 	public static boolean correctionON = false;
@@ -124,6 +122,7 @@ public class Main {
 		rgbSample2 = colorSensor2.getMode("Red");
 		meanFilter2 = new MeanFilter(rgbSample2, rgbSample2.sampleSize());
 		RGBData2 = new float[meanFilter2.sampleSize()];
+		float[] test = new float[100];
 
 		// set the color mapping
 		setColorMapping();
@@ -142,9 +141,10 @@ public class Main {
 		Thread odoDisplayThread = new Thread(odometryDisplay);
 		Thread lineDeterctor1Thread = new Thread(lineDetector1);
 		BridgeTunnel bridge = new BridgeTunnel(navigation, odometer, lightLocalizer);
-		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
 		Thread lineDeterctor2Thread = new Thread(lineDetector2);
 		Thread odoCorrectionThread = new Thread(odometryCorrection);
+		ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
+		blockColorSensor.start();
 
 		// Exit early by pressing button
 		(new Thread() {
@@ -159,6 +159,7 @@ public class Main {
 		odoThread.start();
 		odoDisplayThread.start();
 		usPoller.start();
+		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
 		lineDeterctor1Thread.start();
 		lineDeterctor2Thread.start();
 		getWifiParameter();
@@ -174,7 +175,7 @@ public class Main {
 		}
 
 		// Go to bridge
-		travelBaseOnStartingPosition(bridge, navigation);
+		travelBaseOnStartingPosition(bridge, navigation,scan,blockColorSensor,odometer);
 
 	}
 
@@ -191,12 +192,15 @@ public class Main {
 
 	}
 
-	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav) {
+	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) throws OdometerExceptions {
+		// comment Search for basically Beta Demo!
 		if (startZone == Start_Zone.Red_Zone) {
-			bridge.travelToBridge();
+			bridge.travelToBridge();	
+			Search(nav,scan,colorIdentifier,odo);
 			bridge.travelToTunnel();
 		} else {
 			bridge.travelToTunnel();
+			Search(nav,scan,colorIdentifier,odo);
 			bridge.travelToBridge();
 		}
 		if (startCorner == 0) {
@@ -215,15 +219,41 @@ public class Main {
 			startingCorner[0] = 0;
 			startingCorner[1] = 0;
 		} else if (corner == 1) {
-			startingCorner[0] = 8;
+			startingCorner[0] = 12;
 			startingCorner[1] = 0;
 		} else if (corner == 2) {
-			startingCorner[0] = 8;
-			startingCorner[1] = 8;
+			startingCorner[0] = 12;
+			startingCorner[1] = 12;
 		} else if (corner == 3) {
 			startingCorner[0] = 0;
-			startingCorner[1] = 8;
+			startingCorner[1] = 12;
 		}
+	}
+	
+	private static void Search(Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) {
+		Search search = new Search(nav,colorIdentifier, scan, odo);
+		search.start();
+		long timer = System.currentTimeMillis() + 90000; //timeout after 1min 30 secs
+		while(!search.isFinished() && System.currentTimeMillis() > timer);
+		nav.travelTo(search.getCurentX(), search.getCurentY(),true);
+		switch(search.getCurrentAxis()) {
+			case 1: 
+				nav.travelToTile(search.getCurentX()-1, search.getCurentY());
+				break;
+			case 2: 
+				nav.travelToTile(search.getCurentX(), search.getCurentY());
+				break;	
+			case 3: 
+				nav.travelToTile(search.getCurentX(), search.getCurentY());
+				break;
+			case 4: 
+				nav.travelToTile(search.getCurentX()-1, search.getCurentY()-1);
+				nav.travelToTile(Main.SR_LL[0]-1, Main.SR_LL[1]-1);
+				break;
+			default:
+				break;
+		}
+		nav.travelByTileSteps(Main.SR_UR[0], Main.SR_UR[1]);
 	}
 
 	private static void getWifiParameter() {
@@ -240,10 +270,18 @@ public class Main {
 				startZone = Start_Zone.Red_Zone;
 				assignBlockColor(colors.get(redOponentFlag));
 				startCorner = ((Long) data.get("RedCorner")).intValue();
+				SR_LL[0] = ((Long) data.get("SG_LL_x")).intValue();
+				SR_LL[1] = ((Long) data.get("SG_LL_y")).intValue();
+				SR_UR[0] = ((Long) data.get("SG_UR_x")).intValue();
+				SR_UR[1] = ((Long) data.get("SG_UR_y")).intValue();
 			} else if (greenTeam == 2) {
 				startZone = Start_Zone.Green_Zone;
 				assignBlockColor(colors.get(greenOponentFlag));
 				startCorner = ((Long) data.get("GreenCorner")).intValue();
+				SR_LL[0] = ((Long) data.get("SR_LL_x")).intValue();
+				SR_LL[1] = ((Long) data.get("SR_LL_y")).intValue();
+				SR_UR[0] = ((Long) data.get("SR_UR_x")).intValue();
+				SR_UR[1] = ((Long) data.get("SR_UR_y")).intValue();
 			}
 
 			// assign the starting coordinate

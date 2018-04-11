@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.Final_Project.Main;
+
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.tests.LightLocalizer;
 import lejos.hardware.Sound;
@@ -15,6 +16,7 @@ public class BridgeTunnel {
 	LightLocalizer ll;
 	// private final double TILE_SIZE = 30.48;
 	public boolean finished = false;
+	private boolean parallelToyAxis = false;
 
 	/**
 	 * Constructor for the Bridge class
@@ -37,6 +39,7 @@ public class BridgeTunnel {
 	public void travelToBridge() {
 		// bridge is parallel to the y axis
 		if (Math.abs(Main.bridgeLocation_LL[0] - Main.bridgeLocation_UR[0]) < 2) {
+			this.parallelToyAxis = true;
 			// if we approach the bridge at UR
 			if (!(LLnearestPointY(Main.bridgeLocation_UR, Main.bridgeLocation_LL, true))) {
 				double x = Main.bridgeLocation_UR[0];
@@ -44,6 +47,11 @@ public class BridgeTunnel {
 				x = x - 1;
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_LL[0], Main.bridgeLocation_LL[1] - 1);
 				// Localize
@@ -55,6 +63,11 @@ public class BridgeTunnel {
 				double y = Main.bridgeLocation_LL[1];
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y - 1);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_UR[0] - 1, Main.bridgeLocation_UR[1]);
 				// Localize
@@ -70,6 +83,11 @@ public class BridgeTunnel {
 				y = y - 1;
 				// travel to front of bridge
 				nav.travelByTileSteps(x, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_LL[0] - 1, Main.bridgeLocation_LL[1]);
 				// Localize
@@ -81,6 +99,11 @@ public class BridgeTunnel {
 				double y = Main.bridgeLocation_LL[1];
 				// travel to front of bridge
 				nav.travelByTileSteps(x - 1, y);
+				// Localize
+				ll.Localize(false);
+				// wait for light localizer to finish
+				while (!ll.finished) {
+				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_UR[0], Main.bridgeLocation_UR[1] - 1);
 				// Localize
@@ -153,7 +176,7 @@ public class BridgeTunnel {
 				// wait for light localizer to finish
 				while (!ll.finished) {
 				}
-				// cross bridge
+				// cross tunnel
 				nav.travelToTile(Main.tunnelLocation_LL[0] - 1, Main.tunnelLocation_LL[1]);
 			}
 		}

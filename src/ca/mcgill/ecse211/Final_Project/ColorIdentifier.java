@@ -28,15 +28,13 @@ public class ColorIdentifier extends Thread {
 	/**
 	 * Enum of all possible colours for the Block
 	 */
-	public enum BlockColor {
+	public static enum BlockColor {
 		RED, BLUE, YELLOW, WHITE, NONE
 	};
 
 	private BlockColor tb;
 	public boolean tbDetected = false;
-
 	public BlockColor blockColor = BlockColor.NONE;
-
 	/**
 	 * Constructor for ColorIdentifier 
 	 * @param filteredLightData
