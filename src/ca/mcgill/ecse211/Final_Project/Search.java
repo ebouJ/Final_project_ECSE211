@@ -237,7 +237,7 @@ public class Search extends Thread {
 			if (Main.SR_UR[0] <= currentX) {
 				goDown = true;
 			}
-			nav.move(14, false);
+			nav.move(12, false);
 		} else {
 			goDown();
 		}
@@ -252,7 +252,7 @@ public class Search extends Thread {
 		
 		nav.travelTo(Main.SR_LL[0], Main.SR_LL[1], true);
 		nav.turnTo(0); // correct this
-		nav.move(14, false);
+		nav.move(12, false);
 		// add UR if closer...
 	}
 
@@ -277,7 +277,7 @@ public class Search extends Thread {
 			nav.travelTo(currentX, currentY, true);
 			nav.turnTo(270);
 		}
-		nav.move(14, false);
+		nav.move(12, false);
 	}
 	public double getCurentX() {
 		return this.currentX;
