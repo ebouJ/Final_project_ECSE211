@@ -32,7 +32,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.22";
+	private static final String SERVER_IP = "192.168.2.36";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
@@ -233,7 +233,8 @@ public class Main {
 	private static void Search(Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) {
 		Search search = new Search(nav,colorIdentifier, scan, odo);
 		search.start();
-		while(!search.isFinished());
+		long timer = System.currentTimeMillis() + 90000; //timeout after 1min 30 secs
+		while(!search.isFinished() && System.currentTimeMillis() > timer);
 		nav.travelTo(search.getCurentX(), search.getCurentY(),true);
 		switch(search.getCurrentAxis()) {
 			case 1: 
