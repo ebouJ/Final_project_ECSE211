@@ -25,7 +25,6 @@ public class Search extends Thread {
 	boolean firstScan = true;
 	boolean goDown = false;
 	private static boolean isFinished = false;
-	boolean fuckOffScan = false;
 	int lastHeading = 0;
 	private int currentAxis = 0;
 
@@ -183,12 +182,12 @@ public class Search extends Thread {
 	 */
 	public int checkForBlocksColor() {
 		if (rgb.getBlockColor().equals(Main.tb)) {
-			Sound.twoBeeps(); // target block is found
-			Sound.twoBeeps();
-			Sound.twoBeeps();
+			Sound.beep(); // target block i
+			Sound.beep(); 
+			Sound.beep(); 
 			return 1;
 		} else if (!rgb.getBlockColor().equals(Main.none)) {
-			Sound.twoBeeps();
+			Sound.beep();
 			return 2;
 		} else {
 			return 3;
@@ -261,8 +260,6 @@ public class Search extends Thread {
 		if (Main.SR_LL[1] < currentY) {
 			this.currentAxis = 3;
 			currentY--;
-
-			// nav.travelByTileSteps(currentX, currentY);
 			nav.travelTo(currentX, currentY, true);
 			nav.turnTo(180);
 			if (Main.SR_LL[1] == currentY) {
@@ -273,9 +270,12 @@ public class Search extends Thread {
 		else if (Main.SR_LL[0] < currentX) {
 			this.currentAxis = 4;
 			currentX--;
-			// nav.travelByTileSteps(currentX, currentY);
 			nav.travelTo(currentX, currentY, true);
-			nav.turnTo(270);
+			if(Main.SR_LL[0]  == currentX ) {
+				nav.turnTo(270);
+				this.isFinished = true;
+				return;
+			}
 		}
 		nav.move(12, false);
 	}
