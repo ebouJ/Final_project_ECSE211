@@ -17,7 +17,7 @@ public class LightLocalizer {
 	Odometer odo;
 	OdometryCorrection oc;
 	private final double TILE_SIZE = 30.48;
-	public boolean finished = false;
+	private boolean finished = false;
 	private final double passLine = 9;
 
 	public LightLocalizer(Navigation nav, Odometer odo, OdometryCorrection oc) {
@@ -114,6 +114,10 @@ public class LightLocalizer {
 		}
 
 		finished = true;
+	}
+	
+	public boolean isFinished() {
+		return this.finished;
 	}
 
 }

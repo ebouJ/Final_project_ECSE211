@@ -32,7 +32,7 @@ import lejos.robotics.filter.MedianFilter;
 
 public class Main {
 
-	private static final String SERVER_IP = "192.168.2.26";
+	private static final String SERVER_IP = "192.168.2.3";
 	private static final int TEAM_NUMBER = 2;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
@@ -58,6 +58,7 @@ public class Main {
 	private static SampleProvider rgbSample2;
 	private static SampleProvider meanFilter2;
 	private static float[] RGBData2;
+	private static float[] test = new float[100];
 
 	// Constants (Adjust these for better performance)
 	public static final double WHEEL_RAD = 2.1;
@@ -101,8 +102,66 @@ public class Main {
 	public static boolean correctionON = false;
 
 	public static void main(String[] args) throws OdometerExceptions {
-		// System.out.println("Running");
-		// Set up ultrasonic sensor and filter for localization
+		//Filters data 
+	    filter();
+
+		// set the color mapping
+		setColorMapping();
+		
+		// initialize all threads
+		final TextLCD lcd = LocalEV3.get().getTextLCD();
+		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
+		Navigation navigation = new Navigation(odometer, leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+		OdometryCorrection odometryCorrection = new OdometryCorrection();
+		LightLocalizer lightLocalizer = new LightLocalizer(navigation, odometer, odometryCorrection);
+		LineDetector1 lineDetector1 = new LineDetector1(meanFilter, RGBData, odometryCorrection, odometer);
+		LineDetector2 lineDetector2 = new LineDetector2(meanFilter2, RGBData2, odometryCorrection, odometer);
+		Thread odoThread = new Thread(odometer);
+		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(State.FALLING_EDGE_STATE, navigation, odometer);
+		UltrasonicPoller usPoller = new UltrasonicPoller(medianFilter, usData, usLocalizer);
+		Thread lineDeterctor1Thread = new Thread(lineDetector1);
+		BridgeTunnel bridge = new BridgeTunnel(navigation, odometer, lightLocalizer);
+		Thread lineDeterctor2Thread = new Thread(lineDetector2);
+		Thread odoCorrectionThread = new Thread(odometryCorrection);
+		ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
+		blockColorSensor.start();
+
+		// Exit early by pressing button
+		(new Thread() {
+			public void run() {
+				while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
+				}
+				System.exit(0);
+			}
+		}).start();
+
+		// initialize four threads before receiving parameters from wifi
+		odoThread.start();
+		usPoller.start();
+		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
+		lineDeterctor1Thread.start();
+		lineDeterctor2Thread.start();
+		getWifiParameter();
+		lcd.clear();
+		usLocalizer.start();
+		odoCorrectionThread.start();
+		while (!usLocalizer.finished) {
+		}
+		// start light localization
+		lightLocalizer.Localize(true);
+		// wait for light localizer to finish
+		while (!lightLocalizer.isFinished()) {
+		}
+
+		// Travel based on region
+		travelBaseOnStartingPosition(bridge, navigation,scan,blockColorSensor,odometer);
+
+	}
+	
+	/**
+	 * This method filters the input for untralSonic and Light Localazation.
+	 */
+	private static void filter() {
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
 		usSample = usSensor.getMode("Distance");
@@ -122,75 +181,21 @@ public class Main {
 		rgbSample2 = colorSensor2.getMode("Red");
 		meanFilter2 = new MeanFilter(rgbSample2, rgbSample2.sampleSize());
 		RGBData2 = new float[meanFilter2.sampleSize()];
-		float[] test = new float[100];
-
-		// set the color mapping
-		setColorMapping();
-		// initialize all threads
-		final TextLCD lcd = LocalEV3.get().getTextLCD();
-		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
-		Navigation navigation = new Navigation(odometer, leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
-		OdometryCorrection odometryCorrection = new OdometryCorrection();
-		LightLocalizer lightLocalizer = new LightLocalizer(navigation, odometer, odometryCorrection);
-		LineDetector1 lineDetector1 = new LineDetector1(meanFilter, RGBData, odometryCorrection, odometer);
-		LineDetector2 lineDetector2 = new LineDetector2(meanFilter2, RGBData2, odometryCorrection, odometer);
-		Thread odoThread = new Thread(odometer);
-		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(State.FALLING_EDGE_STATE, navigation, odometer);
-		UltrasonicPoller usPoller = new UltrasonicPoller(medianFilter, usData, usLocalizer);
-		Display odometryDisplay = new Display(lcd, usLocalizer, odometryCorrection);
-		Thread odoDisplayThread = new Thread(odometryDisplay);
-		Thread lineDeterctor1Thread = new Thread(lineDetector1);
-		BridgeTunnel bridge = new BridgeTunnel(navigation, odometer, lightLocalizer);
-		Thread lineDeterctor2Thread = new Thread(lineDetector2);
-		Thread odoCorrectionThread = new Thread(odometryCorrection);
-		ColorIdentifier blockColorSensor = new ColorIdentifier(test, tb);
-		blockColorSensor.start();
-
-		// Exit early by pressing button
-		(new Thread() {
-			public void run() {
-				while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
-				}
-				System.exit(0);
-			}
-		}).start();
-
-		// initialize four threads before receiving parameters from wifi
-		odoThread.start();
-		odoDisplayThread.start();
-		usPoller.start();
-		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
-		lineDeterctor1Thread.start();
-		lineDeterctor2Thread.start();
-		getWifiParameter();
-		lcd.clear();
-		usLocalizer.start();
-		odoCorrectionThread.start();
-		while (!usLocalizer.finished) {
-		}
-		// start light localization
-		lightLocalizer.Localize(true);
-		// wait for light localizer to finish
-		while (!lightLocalizer.finished) {
-		}
-
-		// Go to bridge
-		travelBaseOnStartingPosition(bridge, navigation,scan,blockColorSensor,odometer);
-
+		
 	}
 
-	private static void assignBlockColor(String color) {
-		if (color == "Red") {
-			tb = BlockColor.RED;
-		} else if (color == "Blue") {
-			tb = BlockColor.BLUE;
-		} else if (color == "Yellow") {
-			tb = BlockColor.YELLOW;
-		} else if (color == "White") {
-			tb = BlockColor.WHITE;
-		}
+	
+	/**
+	 * Travels to either the bridge or tunnel based on our zone. Whether Red or Green zone.
+	 * After that this method travel to the starting position
+	 * 
+	 * @param bridge
+	 * @param nav
+	 * @param scan
+	 * @param colorIdentifier
+	 * @param odo
+	 */
 
-	}
 
 	private static void travelBaseOnStartingPosition(BridgeTunnel bridge, Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) throws OdometerExceptions {
 		// comment Search for basically Beta Demo!
@@ -213,28 +218,24 @@ public class Main {
 			nav.travelByTileSteps(startingCorner[0], startingCorner[1]-1);
 		}
 	}
-
-	private static void assignStartingCoordinate(double corner) {
-		if (corner == 0) {
-			startingCorner[0] = 0;
-			startingCorner[1] = 0;
-		} else if (corner == 1) {
-			startingCorner[0] = 12;
-			startingCorner[1] = 0;
-		} else if (corner == 2) {
-			startingCorner[0] = 12;
-			startingCorner[1] = 12;
-		} else if (corner == 3) {
-			startingCorner[0] = 0;
-			startingCorner[1] = 12;
-		}
-	}
+	
+	
+	/**
+	 * This method starts the Search thread. Set a timer and timeout after 1min 30 sec or if we detect the target block 
+	 * 
+	 * @param nav
+	 * @param scan
+	 * @param colorIdentifier
+	 * @param odo
+	 */
+	
 	
 	private static void Search(Navigation nav, BlockScanner scan, ColorIdentifier colorIdentifier, Odometer odo) {
+		// initialize the search class
 		Search search = new Search(nav,colorIdentifier, scan, odo);
 		search.start();
-		//long timer = System.currentTimeMillis() + 90000; //timeout after 1min 30 secs
-		while(!search.isFinished());
+		long timer = System.currentTimeMillis() + 90000; //timeout after 1min 30 secs
+		while(!search.isFinished() && System.currentTimeMillis() < timer); // 
 		nav.travelTo(search.getCurentX(), search.getCurentY(),true);
 		switch(search.getCurrentAxis()) {
 			case 1: 
@@ -244,6 +245,7 @@ public class Main {
 				nav.travelToTile(search.getCurentX(), search.getCurentY());
 				break;	
 			case 3: 
+				
 				nav.travelToTile(search.getCurentX(), search.getCurentY());
 				break;
 			case 4: 
@@ -255,6 +257,10 @@ public class Main {
 		}
 		nav.travelByTileSteps(Main.SR_UR[0], Main.SR_UR[1]);
 	}
+	
+	/**
+	 * This method gets the parameter from the wifi and initialize all the respective coordinates.
+	 */
 
 	private static void getWifiParameter() {
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
@@ -300,15 +306,58 @@ public class Main {
 			tunnelLocation_UR[1] = ((Long) data.get("TN_UR_y")).intValue();
 
 		} catch (Exception e) {
-			// System.err.println("Error: " + e.getMessage());
 		}
 	}
+	
+	/**
+	 * Assign the position based on our starting corner.
+	 * 
+	 * @param corner
+	 */
 
+	private static void assignStartingCoordinate(double corner) {
+		if (corner == 0) {
+			startingCorner[0] = 0;
+			startingCorner[1] = 0;
+		} else if (corner == 1) {
+			startingCorner[0] = 12;
+			startingCorner[1] = 0;
+		} else if (corner == 2) {
+			startingCorner[0] = 12;
+			startingCorner[1] = 12;
+		} else if (corner == 3) {
+			startingCorner[0] = 0;
+			startingCorner[1] = 12;
+		}
+	}
+ 
+	/**
+	 * Map the color to a HashMap.
+	 * 
+	 */
 	private static void setColorMapping() {
 		colors.put(1, "Red");
 		colors.put(2, "Blue");
 		colors.put(3, "Yellow");
 		colors.put(4, "White");
+	}
+	
+	/**
+	 * assign the color to tb variable using the BlockColor class
+	 * 
+	 * @param color
+	 */
+
+	private static void assignBlockColor(String color) {
+		if (color == "Red") {
+			tb = BlockColor.RED;
+		} else if (color == "Blue") {
+			tb = BlockColor.BLUE;
+		} else if (color == "Yellow") {
+			tb = BlockColor.YELLOW;
+		} else if (color == "White") {
+			tb = BlockColor.WHITE;
+		}
 	}
 
 }
