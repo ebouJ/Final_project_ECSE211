@@ -1,9 +1,9 @@
 package ca.mcgill.ecse211.navigation;
 
+import ca.mcgill.ecse211.Final_Project.LightLocalizer;
 import ca.mcgill.ecse211.Final_Project.Main;
 
 import ca.mcgill.ecse211.odometer.Odometer;
-import ca.mcgill.ecse211.tests.LightLocalizer;
 import lejos.hardware.Sound;
 
 /**
