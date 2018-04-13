@@ -49,7 +49,7 @@ public class BlockScanner extends Thread {
 
 		// Scan 90 deg
 		spin(90);
-		// if we scanned a block
+		// if we scanned a block and is within the search zone
 		if (smallestDistance < 60f && withinSearchZone()) {
 			Sound.beep();
 			goToBlock();
@@ -70,13 +70,19 @@ public class BlockScanner extends Thread {
 		smallestAngle = Double.MAX_VALUE;
 		// timer to get data while rotating
 		int timer = angle == 90 ? 2000 : 4000;
-		rotate(timer, true);
 		// spin 90 counter-clockwise
 		rotate(timer, false);
-
 		// spin 90 anti-clockwise
+		rotate(timer, true);
 		smallestAngle = map.get(smallestDistance);
 	}
+	
+	/**
+	 * rotates the robot either 180 or 360 based on the value of timer.
+	 * 
+	 * @param timer
+	 * @param clockwise
+	 */
 
 	private void rotate(int timer, boolean clockwise) {
 		long endTimeMillisCW = System.currentTimeMillis() + timer;
@@ -92,14 +98,28 @@ public class BlockScanner extends Thread {
 			}
 		}
 	}
+	
+	/**
+	 * returns the shortest distance
+	 * 
+	 */
 
 	public float getDistance() {
 		return this.smallestDistance;
 	}
-
+	
+	/**
+	 * returns the angle corresponding to the shortest distance
+	 * 
+	 */
+	
 	public double getAngle() {
 		return this.smallestAngle;
 	}
+	
+	/**
+	 * Turn to the nearest angle and travel to to that distance
+	 */
 
 	private void goToBlock() {
 		Sound.beep();
@@ -128,19 +148,21 @@ public class BlockScanner extends Thread {
 	}
 
 	private void goCloser() {
-		while (us.getDistance() > 3) {
-			nav.moveForward(100);
-		}
+		nav.move(1.5, false);
+
 	}
+	/**
+	 * A boolean method to check if we are still the detected block is within the search zone.
+	 * 
+	 * @return true if the detected block is within the search zone, false otherwise
+	 */
 
 	private boolean withinSearchZone() {
 		boolean withInX = false;
 		boolean withInY = false;
 
-		double targetX = (smallestDistance * Math.sin(Math.toRadians(smallestAngle)));
-		targetX += odo.getXYT()[0];
-		double targetY = (smallestDistance * Math.cos(Math.toRadians(smallestAngle)));
-		targetY += odo.getXYT()[1];
+		double targetX = (smallestDistance * Math.sin(Math.toRadians(smallestAngle))) + odo.getXYT()[0];
+		double targetY = (smallestDistance * Math.cos(Math.toRadians(smallestAngle))) +  odo.getXYT()[1];
 
 		// if x value is within zone
 		if ((targetX > Main.SR_LL[0] * 30.48) && (targetX < Main.SR_UR[0] * 30.48)) {

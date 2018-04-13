@@ -19,10 +19,11 @@ public class ColorIdentifier extends Thread {
 
 	private float[] lightData;
 	private float lightLevel = -1f;
+	private boolean blockDetected = false;
 	private static final Port blockColorPort = LocalEV3.get().getPort("S4");
 	EV3ColorSensor colorSensor = new EV3ColorSensor(blockColorPort);
 	SampleProvider sample = colorSensor.getColorIDMode();
-	public boolean blockDetected = false; // true if a colored block is detected
+	 // true if a colored block is detected
 	// possible colors of blocks
 
 	/**
@@ -33,8 +34,7 @@ public class ColorIdentifier extends Thread {
 	};
 
 	private BlockColor tb;
-	public boolean tbDetected = false;
-	public BlockColor blockColor = BlockColor.NONE;
+	private BlockColor blockColor = BlockColor.NONE;
 	/**
 	 * Constructor for ColorIdentifier 
 	 * @param filteredLightData
@@ -92,14 +92,14 @@ public class ColorIdentifier extends Thread {
 	 * 
 	 * @return boolean is true if the block is detected 
 	 */
-	public synchronized boolean getBlockDetected() {
+	public  boolean getBlockDetected() {
 		return this.blockDetected;
 	}
 	/**
 	 * 
 	 * @return block color
 	 */
-	public synchronized BlockColor getBlockColor() {
+	public  BlockColor getBlockColor() {
 		return this.blockColor;
 	}
 }

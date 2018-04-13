@@ -48,8 +48,8 @@ public class BlockDisplay implements Runnable {
 		do {
 			updateStart = System.currentTimeMillis();
 			lcd.clear();
-			lcd.drawString("Block: " + rgb.blockDetected, 0, 4);
-			lcd.drawString("Color: " + rgb.blockColor.toString(), 0, 5);
+			lcd.drawString("Block: " + rgb.getBlockDetected(), 0, 4);
+			lcd.drawString("Color: " + rgb.getBlockColor().toString(), 0, 5);
 			lcd.drawString("Location: " + "to do", 0, 6);
 
 			// this ensures that the data is updated only once every period

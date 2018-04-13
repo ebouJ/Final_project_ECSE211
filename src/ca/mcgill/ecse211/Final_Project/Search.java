@@ -30,7 +30,6 @@ public class Search extends Thread {
 
 	int counter = 0;
 	private Object lock1 = new Object();
-	private Object lock2 = new Object();
 
 	/**
 	 * Enum of all the states of the robot functionalities.
@@ -40,6 +39,15 @@ public class Search extends Thread {
 	}
 
 	private State state = State.INIT;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param nav
+	 * @param rgb
+	 * @param bs
+	 * @param odo
+	 */
 
 	public Search(Navigation nav, ColorIdentifier rgb, BlockScanner bs, Odometer odo) {
 		this.nav = nav;
@@ -86,7 +94,6 @@ public class Search extends Thread {
 			goToNextPoint();
 		}
 		if (bs.Scan()) {
-			// if (fuckOffScan) {
 			nav.stop(false);
 			return State.FOUNDBLOCK;
 		}
@@ -123,27 +130,6 @@ public class Search extends Thread {
 				} else if (result == 2) {
 					return State.SEARCHING;
 				}
-				nav.rotate(-25, false);
-				result = isTargetBlock();
-				if (result == 1) {
-					return State.FINISHED;
-				} else if (result == 2) {
-					return State.SEARCHING;
-				}
-				nav.rotate(-12.5, false);
-				result = isTargetBlock();
-				if (result == 1) {
-					return State.FINISHED;
-				} else if (result == 2) {
-					return State.SEARCHING;
-				}
-				nav.rotate(-12.5, false);
-				result = isTargetBlock();
-				if (result == 1) {
-					return State.FINISHED;
-				} else if (result == 2) {
-					return State.SEARCHING;
-				}
 				// Target was not found, keep searching (Default)
 				return State.SEARCHING;
 			}
@@ -153,7 +139,7 @@ public class Search extends Thread {
 	/**
 	 * determines if a block is the target block
 	 * 
-	 * @return 1 if target block, 2 otherwise
+	 * @return 1 if target block, 2 non-target block, 3 otherwise
 	 */
 	private int isTargetBlock() {
 		int result = checkForBlocksColor();
@@ -171,7 +157,6 @@ public class Search extends Thread {
 	}
 
 	private void state_finished() {
-		//nav.travelToTile(Main.SR_UR[0], Main.SR_UR[1]);
 		this.isFinished = true;
 	}
 
@@ -206,16 +191,15 @@ public class Search extends Thread {
 		if (!goDown) {
 			if (firstScan) {
 				firstScan = false;
-				// nav.travelToTile(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(0);
 				this.currentAxis = 1;
 			}
 
 			else if (Main.SR_UR[1] > currentY) {
+				
 				this.currentAxis = 1;
 				currentY++;
-				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(0);
 				if (Main.SR_UR[1] == currentY) {
@@ -226,7 +210,6 @@ public class Search extends Thread {
 			else if (Main.SR_UR[0] > currentX) {
 				this.currentAxis = 2;
 				currentX++;
-				// nav.travelByTileSteps(currentX, currentY);
 				nav.travelTo(currentX, currentY, true);
 				nav.turnTo(90);
 				if (Main.SR_UR[0] == currentX) {
@@ -273,8 +256,7 @@ public class Search extends Thread {
 			nav.travelTo(currentX, currentY, true);
 			if(Main.SR_LL[0]  == currentX ) {
 				nav.turnTo(270);
-				this.isFinished = true;
-				return;
+				
 			}
 		}
 		nav.move(12, false);

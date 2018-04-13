@@ -19,17 +19,15 @@ public class Odometer extends OdometerData implements Runnable {
   private int rightMotorTachoCount;
   private int lastLeftMotorTachoCount;
   private int lastRightMotorTachoCount;
-  private EV3LargeRegulatedMotor leftMotor;
-  private EV3LargeRegulatedMotor rightMotor;
-
   private final double TRACK;
   private final double WHEEL_RAD;
+  
+  private EV3LargeRegulatedMotor leftMotor;
+  private EV3LargeRegulatedMotor rightMotor;
 
   //private double[] position;
   
   private double dx, dy, dTheta, leftDistance, rightDistance, dDistance;
-
-
   private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
 
   /**

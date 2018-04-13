@@ -15,8 +15,7 @@ public class BridgeTunnel {
 	Odometer odo;
 	LightLocalizer ll;
 	// private final double TILE_SIZE = 30.48;
-	public boolean finished = false;
-	private boolean parallelToyAxis = false;
+	private boolean finished = false;
 
 	/**
 	 * Constructor for the Bridge class
@@ -39,7 +38,6 @@ public class BridgeTunnel {
 	public void travelToBridge() {
 		// bridge is parallel to the y axis
 		if (Math.abs(Main.bridgeLocation_LL[0] - Main.bridgeLocation_UR[0]) < 2) {
-			this.parallelToyAxis = true;
 			// if we approach the bridge at UR
 			if (!(LLnearestPointY(Main.bridgeLocation_UR, Main.bridgeLocation_LL, true))) {
 				double x = Main.bridgeLocation_UR[0];
@@ -50,7 +48,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_LL[0], Main.bridgeLocation_LL[1] - 1);
@@ -66,7 +64,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_UR[0] - 1, Main.bridgeLocation_UR[1]);
@@ -86,7 +84,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_LL[0] - 1, Main.bridgeLocation_LL[1]);
@@ -102,7 +100,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross bridge
 				nav.travelToTile(Main.bridgeLocation_UR[0], Main.bridgeLocation_UR[1] - 1);
@@ -127,7 +125,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// Cross tunnel
 				nav.travelToTile(Main.tunnelLocation_UR[0] - 1, Main.tunnelLocation_UR[1]);
@@ -142,7 +140,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross bridge
 				nav.travelToTile(Main.tunnelLocation_LL[0], Main.tunnelLocation_LL[1] - 1);
@@ -159,7 +157,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// Cross tunnel
 				nav.travelToTile(Main.tunnelLocation_UR[0], Main.tunnelLocation_UR[1] - 1);
@@ -174,7 +172,7 @@ public class BridgeTunnel {
 				// Localize
 				ll.Localize(false);
 				// wait for light localizer to finish
-				while (!ll.finished) {
+				while (!ll.isFinished()) {
 				}
 				// cross tunnel
 				nav.travelToTile(Main.tunnelLocation_LL[0] - 1, Main.tunnelLocation_LL[1]);
@@ -197,8 +195,7 @@ public class BridgeTunnel {
 		double odoY = odo.getXYT()[1];
 
 		// compute x and y components
-		double xUR;
-		double yUR;
+		double xUR,yUR;
 		if (Yaxis) {
 			xUR = Math.abs(odoX - (UR[0] - 1) * 30.48);
 			yUR = Math.abs(odoY - UR[1] * 30.48);
@@ -209,10 +206,10 @@ public class BridgeTunnel {
 		double xLL = Math.abs(odoX - LL[0] * 30.48);
 		double yLL = Math.abs(odoY - LL[1] * 30.48);
 		// compute hypotenuses
-		double distUR = Math.hypot(xUR, yUR);
-		double distLL = Math.hypot(xLL, yLL);
-		boolean b = distLL < distUR;
-		return b;
+		
+		return Math.hypot(xLL, yLL) < Math.hypot(xUR, yUR);
 	}
+	
+
 
 }

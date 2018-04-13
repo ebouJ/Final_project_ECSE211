@@ -16,12 +16,12 @@ public class Navigation {
 	private static final int FORWARD_SPEED = 300;
 	private static final int ROTATE_SPEED = 200;
 	private static final double TILE_SIZE = 30.48;
+	double leftRadius, rightRadius, width;
+	private boolean isNavigating = false;
+	
+	Odometer odo;
 	EV3LargeRegulatedMotor leftMotor;
 	EV3LargeRegulatedMotor rightMotor;
-	double leftRadius, rightRadius;
-	double width;
-	Odometer odo;
-	boolean isNavigating = false;
 
 	/**
 	 * @param odo
@@ -352,28 +352,6 @@ public class Navigation {
 
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-	/**
-	 * Gets the current heading of the robot
-	 * @return 1 if +y, 2 if -y, 3 if +x, 4 if -x, 0 otherwise
-	 */
-	public int getHeading() {
-		double theta = odo.getXYT()[2];
-		if(theta < 10 || theta > 350) {
-			return 1;
-		}
-		else if (theta < 190 && theta > 170) {
-			return 2;
-		}
-		else if (theta < 100 && theta > 80) {
-			return 3;
-		}
-		else if (theta < 280 && theta > 260) {
-			return 4;
-		}
-		else {
-			return 0;
-		}
 	}
 
 	/**
