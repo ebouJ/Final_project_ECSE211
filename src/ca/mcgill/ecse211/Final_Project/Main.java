@@ -17,7 +17,6 @@ import ca.mcgill.ecse211.sensor.UltrasonicLocalizer;
 import ca.mcgill.ecse211.sensor.UltrasonicPoller;
 import ca.mcgill.ecse211.sensor.UltrasonicLocalizer.State;
 import ca.mcgill.ecse211.tests.Display;
-import ca.mcgill.ecse211.tests.LightLocalizer;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -141,7 +140,11 @@ public class Main {
 		BlockScanner scan = new BlockScanner(navigation, usPoller, odometer);
 		lineDeterctor1Thread.start();
 		lineDeterctor2Thread.start();
+		
+		//get wifi parameters after starting the threads
 		getWifiParameter();
+		
+		
 		lcd.clear();
 		usLocalizer.start();
 		odoCorrectionThread.start();
